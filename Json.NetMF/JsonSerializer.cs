@@ -43,7 +43,7 @@ namespace Json.NETMF
             Ajax = 2
         }
 
-        public enum SerializeStatus
+        protected enum SerializeStatus
         {
             None = 0,
             Serialize = 1
@@ -400,7 +400,7 @@ namespace Json.NETMF
         /// </summary>
         /// <param name="o"></param>
         /// <returns></returns>
-        private static SerializeStatus GetSerializeState(object o)
+        protected static SerializeStatus GetSerializeState(object o)
         {
             Type type = o.GetType();
 

@@ -44,4 +44,7 @@
     <Reference Include="Microsoft.SPOT.Native">
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="readme.txt" />
+  </ItemGroup>
 </Project>

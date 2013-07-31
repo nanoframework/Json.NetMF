@@ -117,3 +117,6 @@ UpgradeLog*.XML
 
 # binary data file for emulator
 *.dat*
+
+# Nuget package
+*.nupkg
