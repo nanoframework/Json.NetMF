@@ -1,9 +1,11 @@
 # Json.NetMF
-===========
 
 JSON Serializer and Deserializer library for the .NET Micro Framework
 
 This library is a slightly modified version of Mike Jones's JSON Serialization and Deserialization library (https://www.ghielectronics.com/community/codeshare/entry/357) which utilizes part of Huysentruit Wouter's JSON generation library (https://www.ghielectronics.com/community/codeshare/entry/282)
+
+## Requirements
+Microsoft .NET Micro Framework 4.2 or higher
 
 ## Example Usage
 
