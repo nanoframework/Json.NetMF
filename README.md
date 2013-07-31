@@ -54,9 +54,15 @@ Debug.Print(hashTable["firstName"] + " " + hashTable["lastName"]);
 
 Extensions methods are provided to parse a DateTime string to a DateTime object
 ```c#
-
 Hashtable hashTable = JsonSerializer.DeserializeString("{\"firstName\":\"John\",\"lastName\":\"Doe\",\"birthDay\":\"1985-04-27T00:00:00.000Z\"}") as Hashtable;
 DateTime birthday = DateTimeExtensions.FromIso8601(hashTable["birthDay"] as string);
 // Output: "04/27/1985 00:00:00"
 Debug.Print(birthday.ToString());
+```
+
+## Nuget
+Available through Nuget (http://www.nuget.org/packages/Json.NetMF/)
+
+```
+PM> Install-Package Json.NetMF
 ```
