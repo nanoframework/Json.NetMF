@@ -9,9 +9,26 @@
     <licenseUrl>https://github.com/mweimer/Json.NetMF/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/mweimer/Json.NetMF</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>$description$</summary>
     <description>$description$</description>
     <releaseNotes>Initial Release.</releaseNotes>
-    <copyright>Copyright Mike Jones, Huysentruit Wouter, Matt Weimer 2011-2013</copyright>
+    <copyright />
     <tags>netmf json</tags>
   </metadata>
+  <files>
+
+    <file src="bin\Release\Json.NetMF.pdb" target="lib/netmf42/" />
+    <file src="bin\Release\be\Json.NetMF.pe" target="lib/netmf42/be/" />
+    <file src="bin\Release\be\Json.NetMF.pdbx" target="lib/netmf42/be/" />
+    <file src="bin\Release\le\Json.NetMF.pe" target="lib/netmf42/le/" />
+    <file src="bin\Release\le\Json.NetMF.pdbx" target="lib/netmf42/le/" />
+
+    <file src="..\Json.NetMF43\bin\Release\Json.NetMF.dll" target="lib/netmf43/" />
+    <file src="..\Json.NetMF43\bin\Release\Json.NetMF.XML" target="lib/netmf43/" />
+    <file src="..\Json.NetMF43\bin\Release\Json.NetMF.pdb" target="lib/netmf43/" />
+    <file src="..\Json.NetMF43\bin\Release\be\Json.NetMF.pe" target="lib/netmf43/be/" />
+    <file src="..\Json.NetMF43\bin\Release\be\Json.NetMF.pdbx" target="lib/netmf43/be/" />
+    <file src="..\Json.NetMF43\bin\Release\le\Json.NetMF.pe" target="lib/netmf43/le/" />
+    <file src="..\Json.NetMF43\bin\Release\le\Json.NetMF.pdbx" target="lib/netmf43/le/" />
+</files>
 </package>
