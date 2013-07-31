@@ -31,14 +31,28 @@
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
-    <Compile Include="DateTimeExtensions.cs" />
-    <Compile Include="JsonArray.cs" />
-    <Compile Include="JsonObject.cs" />
-    <Compile Include="JsonParser.cs" />
-    <Compile Include="JsonSerializer.cs" />
-    <Compile Include="NumberExtensions.cs" />
+    <Compile Include="..\Json.NetMF\DateTimeExtensions.cs">
+      <Link>DateTimeExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Json.NetMF\JsonArray.cs">
+      <Link>JsonArray.cs</Link>
+    </Compile>
+    <Compile Include="..\Json.NetMF\JsonObject.cs">
+      <Link>JsonObject.cs</Link>
+    </Compile>
+    <Compile Include="..\Json.NetMF\JsonParser.cs">
+      <Link>JsonParser.cs</Link>
+    </Compile>
+    <Compile Include="..\Json.NetMF\JsonSerializer.cs">
+      <Link>JsonSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\Json.NetMF\NumberExtensions.cs">
+      <Link>NumberExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Json.NetMF\StringExtensions.cs">
+      <Link>StringExtensions.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.SPOT.Native">
