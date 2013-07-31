@@ -1,5 +1,4 @@
 # Json.NetMF
-===========
 
 JSON Serializer and Deserializer library for the .NET Micro Framework
 
