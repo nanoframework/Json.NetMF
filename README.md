@@ -4,12 +4,14 @@ JSON Serializer and Deserializer library for the .NET Micro Framework
 
 This library is a slightly modified version of Mike Jones's JSON Serialization and Deserialization library (https://www.ghielectronics.com/community/codeshare/entry/357) which utilizes part of Huysentruit Wouter's JSON generation library (https://www.ghielectronics.com/community/codeshare/entry/282)
 
+Here's a short blog post about how this library came to be: http://mattweimer.net/Posts/Details/1
+
 ## Requirements
 Microsoft .NET Micro Framework 4.2 or higher
 
 ## Example Usage
 
-An instance of the JsonSerializer class can be instantiated using the constructor. This will allow the serialzier to remember your DateTime format preference.
+An instance of the JsonSerializer class can be instantiated using the constructor. This will allow the serializier to remember your DateTime format preference.
 
 ```c#
 JsonSerializer serializer = new JsonSerializer(DateTimeFormat.Default);
@@ -26,7 +28,7 @@ string json = JsonSerializer.SerializeObject(o, DateTimeFormat.Default);
 
 Any object can be serialized as long as its not an interface or abstract. That means an object that is an Array, IList, IDictionary, or IDictionaryEntry will not be serialized. Use ArrayList, Hashtable, or DictionaryEntry instead. 
 
-Only properties that have a public getter and setter will be serialized. The property must be an object that is not an interface, virtual, or abstract.
+Only properties that have a public getter will be serialized. The property must be an object that is not an interface, virtual, or abstract.
 
 DateTime objects can be serialized, and their format in JSON will be ISO 8601 format by default. 
 
@@ -36,7 +38,7 @@ string json = JsonSerializer.SerializeObject(o, DateTimeFormat.Default);
 
 ###Deserialization
 
-Deserializtion will parse your JSON string and return it contents in either ArrayList, Hashtable, double, string, null, bool. You will need to know what type you are expecting and cast the return object to that type.
+Deserialization will parse your JSON string and return it contents in either ArrayList, Hashtable, double, string, null, bool. You will need to know what type you are expecting and cast the return object to that type.
 
 
 ```c#
