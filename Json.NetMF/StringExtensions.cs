@@ -8,16 +8,6 @@ namespace Json.NETMF
 {
 	public static class StringExtensions
 	{
-		public static string PadLeft(this string source, int count, char pad)
-		{
-			for(int i=0; i<count; i++)
-			{
-				source = pad.ToString() + source;
-			}
-
-			return source;
-		}
-
         public static bool EndsWith(this string s, string value)
         {
             return s.IndexOf(value) == s.Length - value.Length;
