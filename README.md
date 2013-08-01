@@ -28,7 +28,7 @@ string json = JsonSerializer.SerializeObject(o, DateTimeFormat.Default);
 
 Any object can be serialized as long as its not an interface or abstract. That means an object that is an Array, IList, IDictionary, or IDictionaryEntry will not be serialized. Use ArrayList, Hashtable, or DictionaryEntry instead. 
 
-Only properties that have a public getter and setter will be serialized. The property must be an object that is not an interface, virtual, or abstract.
+Only properties that have a public getter will be serialized. The property must be an object that is not an interface, virtual, or abstract.
 
 DateTime objects can be serialized, and their format in JSON will be ISO 8601 format by default. 
 
