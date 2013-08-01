@@ -11,7 +11,7 @@ Microsoft .NET Micro Framework 4.2 or higher
 
 ## Example Usage
 
-An instance of the JsonSerializer class can be instantiated using the constructor. This will allow the serialzier to remember your DateTime format preference.
+An instance of the JsonSerializer class can be instantiated using the constructor. This will allow the serializier to remember your DateTime format preference.
 
 ```c#
 JsonSerializer serializer = new JsonSerializer(DateTimeFormat.Default);
@@ -38,7 +38,7 @@ string json = JsonSerializer.SerializeObject(o, DateTimeFormat.Default);
 
 ###Deserialization
 
-Deserializtion will parse your JSON string and return it contents in either ArrayList, Hashtable, double, string, null, bool. You will need to know what type you are expecting and cast the return object to that type.
+Deserialization will parse your JSON string and return it contents in either ArrayList, Hashtable, double, string, null, bool. You will need to know what type you are expecting and cast the return object to that type.
 
 
 ```c#
