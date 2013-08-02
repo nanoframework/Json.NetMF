@@ -68,9 +68,6 @@ namespace Json.NETMF
 
             Type type = o.GetType();
 
-            // All ordinary value types and all objects that are classes that can
-            // and shouold be ToString()'d are handled here.  Special objects like
-            // arrays and classes that have properties to be enumerated are handled below.
             switch (type.Name)
             {
                 case "Boolean":
@@ -87,9 +84,6 @@ namespace Json.NETMF
                 case "Double":
                 case "Decimal":
                 case "Float":
-                    {
-                        return DoubleExtensions.ToString((double)o);
-                    }
                 case "Byte":
                 case "SByte":
                 case "Int16":

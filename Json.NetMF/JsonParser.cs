@@ -17,7 +17,7 @@ namespace Json.NETMF
 	///               enumerated in this list.
 	///   Value Type - an actual value, such as a string, int, bool, Guid, DateTime, etc
 	/// </summary>
-	public class JsonParser
+	internal class JsonParser
 	{
 		protected enum Token
 		{

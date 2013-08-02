@@ -6,91 +6,13 @@ using System.Globalization;
 
 namespace Json.NETMF
 {
-	public enum NumberStyle
+	internal enum NumberStyle
 	{
 		Decimal = 1,
 		Hexadecimal
 	}
 
-	public static class DoubleExtensions
-	{
-		/// <summary>
-		/// Converts a Double to a string using a variant of the Double.ToString() method.
-		/// The problem with the built-in ToString() method is that it wont automatically
-		/// size the precision to fit the number.  So a number like 33.3 gets truncated to
-		/// just 33 unless you specify exactly the right amount of precision.  This method
-		/// attempts to determine the right amount of precision.
-		/// CAUTION!!! I've seen many times when the built-in ToString() method returns
-		/// a rounding error when you specify any meaningful precision.
-		/// </summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static string ToString(double value)
-		{
-			// First, convert to string with impossibly-long precision
-			string fullValue = value.ToString("F64");
-
-			// Find the last non-zero number in the mantissa
-			int mantissaLen = 0;
-			int decimalLen = 0;
-			int i = fullValue.Length - 1;
-			for(; i>= 0; i--)
-			{
-				if(fullValue[i] == '.')
-				{
-					// we made it all the way to the dot
-					decimalLen = i;
-					break;
-				}
-				
-				// Stop counting the mantissa once you reach the last non-zero value in the number
-				if(fullValue[i] != '0' && (mantissaLen == 0))
-				{
-					mantissaLen = i;
-				}
-			}
-
-			// If the entire mantissa was zero, then add 2 for the dot and one mantissa digit
-			mantissaLen = (mantissaLen > 0) ? mantissaLen : 2;
-
-			// Truncate the trailing zeros in the mantissa
-			fullValue = fullValue.Substring(0, mantissaLen + 1);
-
-			return fullValue;
-		}
-	}
-
-	public static class Int32Extensions
-	{
-        public static bool TryParse(string str, out Int32 result)
-        {
-            result = 0;
-            ulong r;
-            bool sign;
-            if (Helper.TryParseUInt64Core(str, false, out r, out sign))
-            {
-                if (!sign)
-                {
-                    if (r <= 9223372036854775807)
-                    {
-                        result = unchecked((Int32)r);
-                        return true;
-                    }
-                }
-                else
-                {
-                    if (r <= 9223372036854775808)
-                    {
-                        result = unchecked(-((Int32)r));
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-	}
-	
-	public static class UInt32Extensions
+	internal static class UInt32Extensions
 	{
 		public static bool TryParse(string str, NumberStyle style, out UInt32 result)
 		{
@@ -104,7 +26,7 @@ namespace Json.NETMF
 		}
 	}
 
-	public static class Int64Extensions
+	internal static class Int64Extensions
 	{
 		public static long Parse(string str)
 		{
@@ -171,7 +93,7 @@ namespace Json.NETMF
 
 	}
 
-	public static class UInt64Extensions
+	internal static class UInt64Extensions
 	{
 		public static ulong Parse(string str)
 		{
@@ -217,7 +139,7 @@ namespace Json.NETMF
 
 	}
 
-	public static class CharExtensions
+	internal static class CharExtensions
 	{
 		/// <summary>
 		/// Converts a Unicode character to a string of its ASCII equivalent.

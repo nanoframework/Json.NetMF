@@ -6,7 +6,7 @@ using System.Collections;
 
 namespace Json.NETMF
 {
-	public static class StringExtensions
+	internal static class StringExtensions
 	{
         public static bool EndsWith(this string s, string value)
         {
