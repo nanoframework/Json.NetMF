@@ -32,7 +32,6 @@ namespace Test
             string s = b["somestring"].ToString();
             bool d = (bool)c[4];
 
-           
 
             Debug.Print(s);
 
