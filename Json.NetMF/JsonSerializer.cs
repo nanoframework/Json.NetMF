@@ -39,7 +39,7 @@ namespace Json.NETMF
         /// Desrializes a Json string into an object.
         /// </summary>
         /// <param name="json"></param>
-        /// <returns>An ArrayList, a Hashtable, a double, a string, null, true, or false</returns>
+        /// <returns>An ArrayList, a Hashtable, a double, a long, a string, null, true, or false</returns>
         public object Deserialize(string json)
         {
             return DeserializeString(json);
@@ -49,7 +49,7 @@ namespace Json.NETMF
 		/// Deserializes a Json string into an object.
 		/// </summary>
 		/// <param name="json"></param>
-        /// <returns>An ArrayList, a Hashtable, a double, a string, null, true, or false</returns>
+        /// <returns>An ArrayList, a Hashtable, a double, a long, a string, null, true, or false</returns>
 		public static object DeserializeString(string json)
 		{
 			return JsonParser.JsonDecode(json);

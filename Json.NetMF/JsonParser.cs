@@ -39,7 +39,7 @@ namespace Json.NETMF
 		/// Parses the string json into a value
 		/// </summary>
 		/// <param name="json">A JSON string.</param>
-		/// <returns>An ArrayList, a Hashtable, a double, a string, null, true, or false</returns>
+		/// <returns>An ArrayList, a Hashtable, a double, long, a string, null, true, or false</returns>
 		public static object JsonDecode(string json)
 		{
 			bool success = true;
@@ -52,7 +52,7 @@ namespace Json.NETMF
 		/// </summary>
 		/// <param name="json">A JSON string.</param>
 		/// <param name="success">Successful parse?</param>
-		/// <returns>An ArrayList, a Hashtable, a double, a string, null, true, or false</returns>
+		/// <returns>An ArrayList, a Hashtable, a double, a long, a string, null, true, or false</returns>
 		public static object JsonDecode(string json, ref bool success)
 		{
 			success = true;
@@ -348,16 +348,7 @@ namespace Json.NETMF
 					style = NumberStyle.Hexadecimal;
 				}
 
-				// If it's an integer, force it to either signed or unsigned 64-bit.
-				// The deserializer will then do unboxing to fit it into the proper size.
-				if(value.StartsWith(minus) || value.StartsWith(plus))
-				{
-				    result = Int64Extensions.Parse(value, style);
-				}
-				else
-				{
-				    result = UInt64Extensions.Parse(value, style);
-				}
+				result = Int64Extensions.Parse(value, style);
 			}
 
 			index = lastIndex + 1;

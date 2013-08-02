@@ -93,52 +93,6 @@ namespace Json.NETMF
 
 	}
 
-	internal static class UInt64Extensions
-	{
-		public static ulong Parse(string str)
-		{
-			ulong result;
-			if (TryParse(str, out result))
-			{
-				return result;
-			}
-			throw new Exception();
-		}
-
-		public static ulong Parse(string str, NumberStyle style)
-		{
-			if (style == NumberStyle.Hexadecimal)
-			{
-				return ParseHex(str);
-			}
-
-			return Parse(str);
-		}
-
-		public static bool TryParse(string str, out ulong result)
-		{
-			bool sign;
-			return Helper.TryParseUInt64Core(str, false, out result, out sign) && !sign;
-		}
-
-		private static ulong ParseHex(string str)
-		{
-			ulong result;
-			if (TryParseHex(str, out result))
-			{
-				return result;
-			}
-			throw new Exception();
-		}
-
-		private static bool TryParseHex(string str, out ulong result)
-		{
-			bool sign;
-			return Helper.TryParseUInt64Core(str, true, out result, out sign);
-		}
-
-	}
-
 	internal static class CharExtensions
 	{
 		/// <summary>
