@@ -75,7 +75,8 @@ Debug.Print(json);
 
 ###Deserialization
 
-Deserialization will parse your JSON string and return it contents in either ArrayList, Hashtable, double, string, null, bool. You will need to know what type you are expecting and cast the return object to that type.
+Deserialization will parse your JSON string and return it contents in either ArrayList, Hashtable, double, long, string, null, bool. You will need to know what type you are expecting and cast the return object to that type 
+or manually check the type and then cast..
 
 ```c#
 // JSON array to ArrayList
