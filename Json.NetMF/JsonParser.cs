@@ -19,7 +19,7 @@ namespace Json.NETMF
 	/// </summary>
 	public class JsonParser
 	{
-		public enum Token
+		protected enum Token
 		{
 			None = 0,
 			ObjectBegin,				// {
@@ -210,9 +210,10 @@ namespace Json.NETMF
             StringBuilder s = new StringBuilder();
 			
 			EatWhitespace(json, ref index);
-			
+
+            // "
+            char c = json[index++];
 			bool complete = false;
-            bool onFirstChar = true;
 			while (!complete)
 			{
 				if (index == json.Length)
@@ -220,19 +221,11 @@ namespace Json.NETMF
 					break;
 				}
 
-                char c = json[index++];
+                c = json[index++];
 				if (c == '"')
 				{
-                    if (!onFirstChar)
-                    {
-                        complete = true;
-                        break;
-                    }
-                    else
-                    {
-                        onFirstChar = false;
-                        continue;
-                    }
+                    complete = true;
+                    break;
 				}
 				else if (c == '\\')
 				{

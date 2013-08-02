@@ -4,51 +4,15 @@ using System;
 using Microsoft.SPOT;
 using System.Reflection;
 using System.Collections;
+using System.Text;
 
 namespace Json.NETMF
 {
 	/// <summary>
-	/// .NET Micro Framework JSON Serializer and Deserializer.
-	/// Mimics, as closely as possible, the excellent JSON (de)serializer at http://www.json.org.
-	/// You can serialize just about any object that contains real property values:
-	/// Value Types (int, bool, string, etc), Classes, Arrays, Dictionaries, Hashtables, etc.
-	/// Caveats:
-	///   1) Each property to be serialized must be public, and contain BOTH a property getter and setter.
-	///   2) You can't serialize interfaces, virtual or abstract properties, private properties.
-	///      Your class can contain these objects, but their values are not serialized.
-	///   3) DateTime objects can be serialized, and their format in JSON will be ISO 8601 format by default. 
-    ///   To use "ASP.NET AJAX" format - specify in the dateTimeFormat agrument in the or static method.
-	///   4) Guids can be serialized.
-	///   3) You can't use Array or IList because they are abstract (or an interface).  Use ArrayList instead.
-	///   4) You can't use IDictionaryEntry, use DictionaryEntry instead.
-	///   5) .NET MF floating point seems to have very little precision, at least on my GHI USBizi hardware.
-	///      I get only about 3 or 4 decimal places of accuracy.
-	/// 
-	/// </summary>
-
-	/// <summary>
-	/// .NET Micro Framework JSON Serializer and Deserializer.
+    /// JSON.NetMF - JSON Serialization and Deserialization library for .NET Micro Framework
 	/// </summary>
     public class JsonSerializer
 	{
-        /// <summary>
-        /// Enumeration of the popular formats of time and date
-        /// within Json.  It's not a standard, so you have to
-        /// know which on you're using.
-        /// </summary>
-        public enum DateTimeFormat
-        {
-            Default = 0,
-            ISO8601 = 1,
-            Ajax = 2
-        }
-
-        protected enum SerializeStatus
-        {
-            None = 0,
-            Serialize = 1
-        }
-
         public JsonSerializer(DateTimeFormat dateTimeFormat = DateTimeFormat.Default)
 		{
             DateFormat = dateTimeFormat;
@@ -60,11 +24,12 @@ namespace Json.NETMF
 	    /// </summary>
         public DateTimeFormat DateFormat { get; set; }
 
-		/// <summary>
-		/// Serializes an object into a Json string.
-		/// </summary>
-		/// <param name="o"></param>
-		/// <returns></returns>
+        /// <summary>
+        /// Convert an object to a JSON string.
+        /// </summary>
+        /// <param name="o">The value to convert. Supported types are: Boolean, String, Byte, (U)Int16, (U)Int32, Float, Double, Decimal, Array, IDictionary, IEnumerable, Guid, Datetime, DictionaryEntry, Object and null.</param>
+        /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
+        /// <remarks>For objects, only public properties with getters are converted.</remarks>
 		public string Serialize(object o)
 		{
             return SerializeObject(o, this.DateFormat);
@@ -91,11 +56,11 @@ namespace Json.NETMF
 		}
 
         /// <summary>
-        /// Convert a value to JSON.
+        /// Convert an object to a JSON string.
         /// </summary>
-        /// <param name="o">The value to convert. Supported types are: Boolean, String, Byte, (U)Int16, (U)Int32, Float, Double, Decimal, JsonObject, JsonArray, Array, Object and null.</param>
+        /// <param name="o">The value to convert. Supported types are: Boolean, String, Byte, (U)Int16, (U)Int32, Float, Double, Decimal, Array, IDictionary, IEnumerable, Guid, Datetime, DictionaryEntry, Object and null.</param>
         /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
-        /// <remarks>For objects, only public fields are converted.</remarks>
+        /// <remarks>For objects, only public properties with getters are converted.</remarks>
         public static string SerializeObject(object o, DateTimeFormat dateTimeFormat = DateTimeFormat.Default)
         {
             if (o == null)
@@ -113,17 +78,10 @@ namespace Json.NETMF
                         return (bool)o ? "true" : "false";
                     }
                 case "String":
+                case "Char":
+                case "Guid":
                     {
-                        // Encapsulate object in double-quotes if it's not already
-                        char v = o.ToString()[0];
-                        if (v == '"')
-                        {
-                            return o.ToString();
-                        }
-                        else
-                        {
-                            return "\"" + o.ToString() + "\"";
-                        }
+                        return "\"" + o.ToString() + "\"";
                     }
                 case "Single":
                 case "Double":
@@ -140,15 +98,8 @@ namespace Json.NETMF
                 case "UInt32":
                 case "Int64":
                 case "UInt64":
-                case "JsonObject":
-                case "JsonArray":
                     {
                         return o.ToString();
-                    }
-                case "Char":
-                case "Guid":
-                    {
-                        return "\"" + o.ToString() + "\"";
                     }
                 case "DateTime":
                     {
@@ -166,103 +117,31 @@ namespace Json.NETMF
                     }
             }
 
-            if (type.IsArray)
+            if (o is IDictionary && !type.IsArray)
             {
-                JsonArray jsonArray = new JsonArray();
-                foreach (object i in (Array)o)
-                {
-                    // If the array object needs to be serialized first, do it
-                    object valueToAdd = string.Empty;
-                    SerializeStatus serialize = GetSerializeState(i);
-                    if (serialize == SerializeStatus.Serialize)
-                    {
-                        valueToAdd = SerializeObject(i, dateTimeFormat);
-                    }
-                    else
-                    {
-                        valueToAdd = i;
-                    }
-                    jsonArray.Add(valueToAdd);
-                }
-                return jsonArray.ToString();
+                IDictionary dictionary = o as IDictionary;
+                return SerializeIDictionary(dictionary, dateTimeFormat);
             }
 
-            if (type == typeof(System.Collections.ArrayList))
+            if (o is IEnumerable)
             {
-                JsonArray jsonArray = new JsonArray();
-                foreach (object i in (o as ArrayList))
-                {
-                    // If the array object needs to be serialized first, do it
-                    object valueToAdd = string.Empty;
-                    SerializeStatus serialize = GetSerializeState(i);
-                    if (serialize == SerializeStatus.Serialize)
-                    {
-                        valueToAdd = SerializeObject(i, dateTimeFormat);
-                    }
-                    else
-                    {
-                        valueToAdd = i;
-                    }
-                    jsonArray.Add(valueToAdd);
-                }
-                return jsonArray.ToString();
-            }
-
-            if (type == typeof(System.Collections.Hashtable))
-            {
-                JsonObject main = new JsonObject();
-                Hashtable table = o as Hashtable;
-                JsonObject to = new JsonObject();
-                foreach (var key in table.Keys)
-                {
-                    // If the array object needs to be serialized first, do it
-                    object valueToAdd = string.Empty;
-                    SerializeStatus serialize = GetSerializeState(table[key]);
-                    if (serialize == SerializeStatus.Serialize)
-                    {
-                        valueToAdd = SerializeObject(table[key], dateTimeFormat);
-                    }
-                    else
-                    {
-                        valueToAdd = table[key];
-                    }
-
-                    to.Add(key, valueToAdd);
-                    //to.Add(key, table[key]);
-                }
-                //main.Add(type.Name, to.ToString());
-                //return main.ToString();
-                return to.ToString();
+                IEnumerable enumerable = o as IEnumerable;
+                return SerializeIEnumerable(enumerable, dateTimeFormat);
             }
 
             if (type == typeof(System.Collections.DictionaryEntry))
             {
-                DictionaryEntry dict = o as DictionaryEntry;
-                JsonObject to = new JsonObject();
-
-                // If the Value property of the DictionaryEntry is an object rather
-                // than a string, then serialize it first.
-                object valueToAdd = string.Empty;
-                SerializeStatus serialize = GetSerializeState(dict.Value);
-                if (serialize == SerializeStatus.Serialize)
-                {
-                    valueToAdd = SerializeObject(dict.Value, dateTimeFormat);
-                }
-                else
-                {
-                    valueToAdd = dict.Value;
-                }
-
-                to.Add(dict.Key, valueToAdd);
-
-                return to.ToString();
+                DictionaryEntry entry = o as DictionaryEntry;
+                Hashtable hashtable = new Hashtable();
+                hashtable.Add(entry.Key, entry.Value);
+                return SerializeIDictionary(hashtable, dateTimeFormat);
             }
 
             if (type.IsClass)
             {
-                JsonObject jsonObject = new JsonObject();
+                Hashtable hashtable = new Hashtable();
 
-                // Iterate through all of the methods, looking for GET properties
+                // Iterate through all of the methods, looking for public GET properties
                 MethodInfo[] methods = type.GetMethods();
                 foreach (MethodInfo method in methods)
                 {
@@ -291,160 +170,73 @@ namespace Json.NETMF
                             continue;
                         }
 
-                        // If the property returns a Hashtable
-                        if (method.ReturnType == typeof(System.Collections.Hashtable))
-                        {
-                            Hashtable table = method.Invoke(o, null) as Hashtable;
-                            JsonObject to = new JsonObject();
-                            foreach (var key in table.Keys)
-                            {
-                                // If the array object needs to be serialized first, do it
-                                object valueToAdd = string.Empty;
-                                SerializeStatus serialize = GetSerializeState(table[key]);
-                                if (serialize == SerializeStatus.Serialize)
-                                {
-                                    valueToAdd = SerializeObject(table[key], dateTimeFormat);
-                                }
-                                else
-                                {
-                                    valueToAdd = table[key];
-                                }
-                                to.Add(key, valueToAdd);
-                                //to.Add(key, table[key]);
-                            }
-                            jsonObject.Add(method.Name.Substring(4), to.ToString());
-                            continue;
-                        }
-
-                        // If the property returns an array of objects
-                        if (method.ReturnType == typeof(System.Collections.ArrayList))
-                        {
-                            ArrayList no = method.Invoke(o, null) as ArrayList;
-                            JsonArray jsonArray = new JsonArray();
-                            foreach (object i in no)
-                            {
-                                // If the array object needs to be serialized first, do it
-                                object valueToAdd = string.Empty;
-                                SerializeStatus serialize = GetSerializeState(i);
-                                if (serialize == SerializeStatus.Serialize)
-                                {
-                                    valueToAdd = SerializeObject(i, dateTimeFormat);
-                                }
-                                else
-                                {
-                                    valueToAdd = i;
-                                }
-                                jsonArray.Add(valueToAdd);
-                            }
-                            jsonObject.Add(method.Name.Substring(4), jsonArray.ToString());
-                            continue;
-                        }
-
-                        // If the property returns a DictionaryEntry
-                        if (method.ReturnType == typeof(System.Collections.DictionaryEntry))
-                        {
-                            DictionaryEntry dict = method.Invoke(o, null) as DictionaryEntry;
-
-                            // If the Value property of the DictionaryEntry needs to be serialized first, do it
-                            object valueToAdd = string.Empty;
-                            SerializeStatus serialize = GetSerializeState(dict.Value);
-                            if (serialize == SerializeStatus.Serialize)
-                            {
-                                valueToAdd = SerializeObject(dict.Value, dateTimeFormat);
-                            }
-                            else
-                            {
-                                valueToAdd = dict.Value;
-                            }
-
-                            // Wrap the DictionaryEntry in a JsonObject
-                            JsonObject to = new JsonObject();
-                            to.Add(dict.Key, valueToAdd);
-                            jsonObject.Add(method.Name.Substring(4), to.ToString());
-                            continue;
-                        }
-
-                        // If the property is a Class that should NOT be ToString()'d, because
-                        // it has properties that must themselves be enumerated and serialized,
-                        // then recursively call myself to serialize them.
-                        if ((method.ReturnType.IsClass) &&
-                            (method.ReturnType.IsArray == false) &&
-                            (method.ReturnType.ToString().StartsWith("System.Collections") == false) &&
-                            (method.ReturnType.ToString().StartsWith("System.String") == false))
-                        {
-                            object no = method.Invoke(o, null);
-                            string value = SerializeObject(no, dateTimeFormat);
-                            jsonObject.Add(method.Name.Substring(4), value);
-                            continue;
-                        }
-
-                        // All other properties are types that will be handled according to 
-                        // their type.  That handler code is the switch statement at the top
-                        // of this function.
-                        object newo = method.Invoke(o, null);
-                        jsonObject.Add(method.Name.Substring(4), newo);
-
-
+                        object returnObject = method.Invoke(o, null);
+                        hashtable.Add(method.Name.Substring(4), returnObject);                 
                     }
                 }
-                return jsonObject.ToString();
+                return SerializeIDictionary(hashtable, dateTimeFormat);
             }
 
             return null;
         }
 
         /// <summary>
-        /// Determines if the specified object needs to be serialized.  It needs to be serialized if it's a 
-        /// class that contains properties that need enumeration.  All other objects that can be directly
-        /// returned, such as ints, strings, etc, do not need to be serialized.
+        /// Convert an IEnumerable to a JSON string.
         /// </summary>
-        /// <param name="o"></param>
-        /// <returns></returns>
-        protected static SerializeStatus GetSerializeState(object o)
+        /// <param name="enumerable">The value to convert.</param>
+        /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
+        protected static string SerializeIEnumerable(IEnumerable enumerable, DateTimeFormat dateTimeFormat = DateTimeFormat.Default)
         {
-            Type type = o.GetType();
+            StringBuilder result = new StringBuilder();
 
-            // Ignore delegates and MethodInfos
-            if ((type == typeof(System.Delegate)) ||
-                (type == typeof(System.MulticastDelegate)) ||
-                (type == typeof(System.Reflection.MethodInfo)))
+            foreach (object current in enumerable)
             {
-                return SerializeStatus.None;
+                if (result.Length > 0)
+                {
+                    result.Append(",");
+                }
+
+                result.Append(SerializeObject(current, dateTimeFormat));
             }
 
-            // If the property returns a Hashtable
-            if (type == typeof(System.Collections.Hashtable))
-            {
-                return SerializeStatus.None;
-            }
-
-            // If the property returns an array of objects
-            if (type == typeof(System.Collections.ArrayList))
-            {
-                return SerializeStatus.Serialize;
-            }
-
-            // If the property returns a DictionaryEntry
-            if (type == typeof(System.Collections.DictionaryEntry))
-            {
-                return SerializeStatus.Serialize;
-            }
-
-            // If the property is a Class that should NOT be ToString()'d, because
-            // it has properties that must themselves be enumerated and serialized,
-            // then recursively call myself to serialize them.
-            if ((type.IsClass) &&
-                (type.IsArray == false) &&
-                (type.ToString().StartsWith("System.Collections") == false) &&
-                (type.ToString().StartsWith("System.String") == false))
-            {
-                return SerializeStatus.Serialize;
-            }
-
-            // All other properties are types that will be handled according to 
-            // their type.  That handler code is the switch statement at the top
-            // of this function.
-            return SerializeStatus.None;
+            return "[" + result + "]";
         }
+
+        /// <summary>
+        /// Convert an IDictionary to a JSON string.
+        /// </summary>
+        /// <param name="dictionary">The value to convert.</param>
+        /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
+        protected static string SerializeIDictionary(IDictionary dictionary, DateTimeFormat dateTimeFormat = DateTimeFormat.Default)
+        {
+            StringBuilder result = new StringBuilder();
+
+            foreach (DictionaryEntry entry in dictionary)
+            {
+                if (result.Length > 0)
+                {
+                    result.Append(",");
+                }
+
+                result.Append("\"" + entry.Key + "\"");
+                result.Append(":");
+                result.Append(SerializeObject(entry.Value, dateTimeFormat));
+            }
+
+            return "{" + result + "}";
+        }
+
 	}
+
+    /// <summary>
+    /// Enumeration of the popular formats of time and date
+    /// within Json.  It's not a standard, so you have to
+    /// know which on you're using.
+    /// </summary>
+    public enum DateTimeFormat
+    {
+        Default = 0,
+        ISO8601 = 1,
+        Ajax = 2
+    }
 }

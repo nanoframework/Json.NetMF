@@ -33,8 +33,6 @@
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
     <Compile Include="DateTimeExtensions.cs" />
-    <Compile Include="JsonArray.cs" />
-    <Compile Include="JsonObject.cs" />
     <Compile Include="JsonParser.cs" />
     <Compile Include="JsonSerializer.cs" />
     <Compile Include="NumberExtensions.cs" />

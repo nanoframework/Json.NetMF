@@ -130,7 +130,7 @@ namespace Json.NETMF
         }
 
 		/// <summary>
-		/// Converts an ASP.NET Ajaz JSON string to DateTime
+		/// Converts an ASP.NET Ajax JSON string to DateTime
 		/// </summary>
 		/// <param name="ajax"></param>
 		/// <returns></returns>
