@@ -2,7 +2,8 @@
 
 JSON Serializer and Deserializer library for the .NET Micro Framework
 
-This library is a forked and modified version of Mike Jones's JSON Serialization and Deserialization library (https://www.ghielectronics.com/community/codeshare/entry/357) 
+This library is a forked and modified version of Mike Jones's JSON Serialization and Deserialization library (https://www.ghielectronics.com/community/codeshare/entry/357).
+
 Its hopefuly faster, more lightweight, and more robust.
 
 Here's a short blog post about how this library came to be: http://mattweimer.net/Posts/Details/1
@@ -52,7 +53,7 @@ Debug.Print(json);
 // Output: {"a string":"hello world","a null":null,"a bool":true,"a number":1,"an array":[1,2,3]}
  ```
 
-Only properties that have a public getter will be serialized. The getter method must not be virtual or abstract and must return an object that is not abstract, a delegate or be of MethodInfo type.
+Other objects will be serialized using their public properties. Only properties that have a public getter will be serialized. The getter method must not be virtual or abstract and must return an object that is not abstract, a delegate or be of MethodInfo type.
 
 DateTime objects can be serialized, and their format in JSON will be ISO 8601 format by default. 
 
