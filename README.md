@@ -2,7 +2,8 @@
 
 JSON Serializer and Deserializer library for the .NET Micro Framework
 
-This library is a forked and modified version of Mike Jones's JSON Serialization and Deserialization library (https://www.ghielectronics.com/community/codeshare/entry/357) 
+This library is a forked and modified version of Mike Jones's JSON Serialization and Deserialization library (https://www.ghielectronics.com/community/codeshare/entry/357).
+
 Its hopefuly faster, more lightweight, and more robust.
 
 Here's a short blog post about how this library came to be: http://mattweimer.net/Posts/Details/1
