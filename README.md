@@ -80,13 +80,15 @@ or manually check the type and then cast..
 
 ```c#
 // JSON array to ArrayList
-ArrayList arrayList = JsonSerializer.DeserializeString("[\"hello\", \"world\", \"!!!\"]") as ArrayList;
+string json = "[\"hello\", \"world\", \"!!!\"]";
+ArrayList arrayList = JsonSerializer.DeserializeString(json) as ArrayList;
 Debug.Print(arrayList[0] + " " + arrayList[1] + arrayList[2]);
 // Output: "Hello World!!!"
 
 
 // JSON object to Hashtable
-Hashtable hashTable = JsonSerializer.DeserializeString("{\"firstName\":\"John\",\"lastName\":\"Doe\"}") as Hashtable;
+string json = "{\"firstName\":\"John\",\"lastName\":\"Doe\"}";
+Hashtable hashTable = JsonSerializer.DeserializeString(json) as Hashtable;
 Debug.Print(hashTable["firstName"] + " " + hashTable["lastName"]);
 // Output: "John Doe"
 
