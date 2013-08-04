@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Json.NetMF")]
 [assembly: AssemblyDescription("JSON Serializer and Deserializer library for the .NET Micro Framework")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Mike Jones, Huysentruit Wouter, Matt Weimer")]
+[assembly: AssemblyCompany("Mike Jones, Matt Weimer")]
 [assembly: AssemblyProduct("Json.NetMF")]
-[assembly: AssemblyCopyright("Copyright © Mike Jones, Huysentruit Wouter, Matt Weimer 2011-2013")]
+[assembly: AssemblyCopyright("Copyright © Mike Jones, Matt Weimer 2011-2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -21,5 +21,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.2.2.0")]
+[assembly: AssemblyVersion("1.2.3.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

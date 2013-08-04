@@ -11,7 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>$description$</summary>
     <description>$description$</description>
-    <releaseNotes>bug fix: number return types</releaseNotes>
+    <releaseNotes>bug fix: allow for abstract properties</releaseNotes>
     <copyright />
     <tags>netmf json</tags>
   </metadata>

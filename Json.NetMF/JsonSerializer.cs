@@ -179,7 +179,7 @@ namespace Json.NETMF
         /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
         protected static string SerializeIEnumerable(IEnumerable enumerable, DateTimeFormat dateTimeFormat = DateTimeFormat.Default)
         {
-            StringBuilder result = new StringBuilder();
+            StringBuilder result = new StringBuilder("[");
 
             foreach (object current in enumerable)
             {
@@ -191,7 +191,8 @@ namespace Json.NETMF
                 result.Append(SerializeObject(current, dateTimeFormat));
             }
 
-            return "[" + result + "]";
+            result.Append("]");
+            return result.ToString();
         }
 
         /// <summary>
@@ -201,7 +202,7 @@ namespace Json.NETMF
         /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
         protected static string SerializeIDictionary(IDictionary dictionary, DateTimeFormat dateTimeFormat = DateTimeFormat.Default)
         {
-            StringBuilder result = new StringBuilder();
+            StringBuilder result = new StringBuilder("{");
 
             foreach (DictionaryEntry entry in dictionary)
             {
@@ -215,7 +216,8 @@ namespace Json.NETMF
                 result.Append(SerializeObject(entry.Value, dateTimeFormat));
             }
 
-            return "{" + result + "}";
+            result.Append("}");
+            return result.ToString();
         }
 
 	}
