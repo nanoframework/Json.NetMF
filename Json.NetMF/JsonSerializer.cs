@@ -143,9 +143,7 @@ namespace Json.NETMF
                     if (method.Name.StartsWith("get_"))
                     {
                         // Ignore abstract and virtual objects
-                        if ((method.IsAbstract ||
-                            (method.IsVirtual) ||
-                            (method.ReturnType.IsAbstract)))
+                        if (method.IsAbstract)
                         {
                             continue;
                         }
