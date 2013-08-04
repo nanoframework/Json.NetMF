@@ -121,7 +121,8 @@ if (deserializedObject is ArrayList)
 
 Extensions methods are provided to parse a DateTime string to a DateTime object
 ```c#
-Hashtable hashTable = JsonSerializer.DeserializeString("{\"firstName\":\"John\",\"lastName\":\"Doe\",\"birthDay\":\"1985-04-27T00:00:00.000Z\"}") as Hashtable;
+string json = "{\"firstName\":\"John\",\"lastName\":\"Doe\",\"birthDay\":\"1985-04-27T00:00:00.000Z\"}";
+Hashtable hashTable = JsonSerializer.DeserializeString(json) as Hashtable;
 DateTime birthday = DateTimeExtensions.FromIso8601(hashTable["birthDay"] as string);
 Debug.Print(birthday.ToString());
 // Output: "04/27/1985 00:00:00"
