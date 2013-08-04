@@ -92,24 +92,24 @@ Debug.Print(hashTable["firstName"] + " " + hashTable["lastName"]);
 
 // Checking return types
 string json = "[1, 2.345, -5, -232323.7878678]";
- object deserializedObject = JsonSerializer.DeserializeString(json);
- if (deserializedObject is ArrayList)
- {
-     ArrayList arrayList = deserializedObject as ArrayList;
-     foreach (object o in arrayList)
-     {
-         if (o is long)
-         {
-             long l = (long) o;
-             Debug.Print("long: " + l);
-         }
-         else if (o is double)
-         {
-             double d = (double)o;
-             Debug.Print("double: " + d);
-         }
-     }
- }
+object deserializedObject = JsonSerializer.DeserializeString(json);
+if (deserializedObject is ArrayList)
+{
+    ArrayList arrayList = deserializedObject as ArrayList;
+    foreach (object o in arrayList)
+    {
+        if (o is long)
+        {
+            long l = (long) o;
+            Debug.Print("long: " + l);
+        }
+        else if (o is double)
+        {
+            double d = (double)o;
+            Debug.Print("double: " + d);
+        }
+    }
+}
 // Output (maybe some prescion errors in the to double.ToString:
 // long: 1
 // double: 2.3450000000000002
