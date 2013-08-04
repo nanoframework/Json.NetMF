@@ -53,7 +53,7 @@ Debug.Print(json);
 // Output: {"a string":"hello world","a null":null,"a bool":true,"a number":1,"an array":[1,2,3]}
  ```
 
-Other objects will be serialized using their public properties. Only properties that have a public getter will be serialized. The getter method must not be virtual or abstract and must return an object that is not abstract, a delegate or be of MethodInfo type.
+Other objects will be serialized using their public properties. Only properties that have a public getter will be serialized.
 
 DateTime objects can be serialized, and their format in JSON will be ISO 8601 format by default. 
 
