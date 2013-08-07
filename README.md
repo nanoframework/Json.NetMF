@@ -76,7 +76,7 @@ Debug.Print(json);
 ###Deserialization
 
 Deserialization will parse your JSON string and return it contents in either ArrayList, Hashtable, double, long, string, null, bool. You will need to know what type you are expecting and cast the return object to that type 
-or manually check the type and then cast..
+or manually check the type and then cast.
 
 ```c#
 // JSON array to ArrayList
@@ -84,7 +84,6 @@ string json = "[\"hello\", \"world\", \"!!!\"]";
 ArrayList arrayList = JsonSerializer.DeserializeString(json) as ArrayList;
 Debug.Print(arrayList[0] + " " + arrayList[1] + arrayList[2]);
 // Output: "Hello World!!!"
-
 
 // JSON object to Hashtable
 string json = "{\"firstName\":\"John\",\"lastName\":\"Doe\"}";
