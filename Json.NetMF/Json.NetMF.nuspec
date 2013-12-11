@@ -11,7 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>$description$</summary>
     <description>$description$</description>
-    <releaseNotes>bug fix: allow for abstract properties</releaseNotes>
+    <releaseNotes>bug fix: issue with initializing string builder with a character</releaseNotes>
     <copyright />
     <tags>netmf json</tags>
   </metadata>

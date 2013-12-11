@@ -183,7 +183,7 @@ namespace Json.NETMF
 
             foreach (object current in enumerable)
             {
-                if (result.Length > 0)
+                if (result.Length > 1)
                 {
                     result.Append(",");
                 }
@@ -206,7 +206,7 @@ namespace Json.NETMF
 
             foreach (DictionaryEntry entry in dictionary)
             {
-                if (result.Length > 0)
+                if (result.Length > 1)
                 {
                     result.Append(",");
                 }
