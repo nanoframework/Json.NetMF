@@ -32,12 +32,37 @@ namespace Test
 
         public static void Main()
         {
-
             BasicSerializationTest();
             SerializeSimpleClassTest();
             BasicDeserializationTest();
             SerializeAbstractClassTest();
+            SerializeStringsWithEscapeChars();
         }
+
+        public static bool SerializeStringsWithEscapeChars()
+        {
+            try
+            {
+                Hashtable hashTable = new Hashtable();
+                hashTable.Add("quote", "---\"---");
+                hashTable.Add("backslash", "---\\---");
+                string json = JsonSerializer.SerializeObject(hashTable);
+                string correctValue = "{\"quote\":\"---\\\"---\",\"backslash\":\"---\\\\---\"}";
+                if (json != correctValue)
+                {
+                    Debug.Print("Fail: SerializeStringsWithEscapeChars - Values did not match");
+                    return false;
+                }
+
+                Debug.Print("Success: SerializeStringsWithEscapeChars");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.Print("Fail: SerializeStringsWithEscapeChars - " + ex.Message);
+                return false;
+            }
+        } 
 
         public static bool SerializeAbstractClassTest()
         {
