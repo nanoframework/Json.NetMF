@@ -78,7 +78,7 @@ namespace Json.NETMF
                 case "Char":
                 case "Guid":
                     {
-                        return "\"" + o.ToString() + "\"";
+                        return "\"" + SerializeString(o as String) + "\"";
                     }
                 case "Single":
                 case "Double":
@@ -220,7 +220,29 @@ namespace Json.NETMF
             return result.ToString();
         }
 
-	}
+        /// <summary>
+        /// Safely serialize a String into a JSON string value, escaping all backslash and quote characters.
+        /// </summary>
+        /// <param name="str">The string to serialize.</param>
+        /// <returns>The serialized JSON string.</returns>
+        protected static string SerializeString(String str)
+        {
+            // If the string is just fine (most are) then make a quick exit for improved performance
+            if (str.IndexOf('\\') < 0 && str.IndexOf('\"') < 0)
+                return str;
+
+            // Build a new string
+            StringBuilder result = new StringBuilder(str.Length + 1); // we know there is at least 1 char to escape
+            foreach (char ch in str.ToCharArray())
+            {
+                if (ch == '\\' || ch == '\"')
+                    result.Append('\\');
+                result.Append(ch);
+            }
+            return result.ToString();
+        }
+
+  }
 
     /// <summary>
     /// Enumeration of the popular formats of time and date
