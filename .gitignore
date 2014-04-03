@@ -121,3 +121,4 @@ UpgradeLog*.XML
 # Nuget package
 *.nupkg
 *.zip
+PushNuget.bat
