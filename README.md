@@ -23,6 +23,14 @@ string json = serializer.Serialize(o);
 Additonally, you can just call the static SerializeObject/DeserializeString methods and specifiy your DateTime format preference as an argument.
 
 ```c#
+string json = JsonSerializer.SerializeObject(o,DateTimeFormat.Default);
+```
+
+DateTime preference is optional, you can simply use:
+
+```c#
+string json = serializer.Serialize(o);
+//or
 string json = JsonSerializer.SerializeObject(o);
 ```
 
