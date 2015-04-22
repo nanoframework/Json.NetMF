@@ -37,6 +37,7 @@ namespace Test
             BasicDeserializationTest();
             SerializeAbstractClassTest();
             SerializeStringsWithEscapeChars();
+            SerializeDeserializeDateTest();
         }
 
         public static bool SerializeStringsWithEscapeChars()
@@ -249,6 +250,32 @@ namespace Test
             catch (Exception ex)
             {
                 Debug.Print("Fail: BasicDeserializationTest - " + ex.Message);
+                return false;
+            }
+        }
+
+        public static bool SerializeDeserializeDateTest()
+        {
+            try
+            {
+                DateTime testTime = new DateTime(2015, 04, 22, 11, 56, 39, 456);
+                JsonSerializer dataSerializer = new JsonSerializer(DateTimeFormat.ISO8601);
+                string jsonString = dataSerializer.Serialize(testTime);
+                string deserializedJsonString = (string)dataSerializer.Deserialize(jsonString);
+                DateTime convertTime = DateTimeExtensions.FromIso8601(deserializedJsonString);
+
+                if (testTime != convertTime)
+                {
+                    Debug.Print("Fail: SerializeDeserializeDateTest - Values did not match");
+                    return false;
+                }
+
+                Debug.Print("Success: SerializeDeserializeDateTest");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.Print("Fail: SerializeDeserializeDateTest - " + ex.Message);
                 return false;
             }
         }
