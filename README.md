@@ -1,6 +1,6 @@
 # Json.NetMF
 
-JSON Serializer and Deserializer library for the .NET Micro Framework
+JSON Serializer and Deserializer library for the .NET Micro Framework and nanoFramework
 
 This library is a forked and modified version of Mike Jones's JSON Serialization and Deserialization library (https://www.ghielectronics.com/community/codeshare/entry/357).
 
@@ -10,6 +10,8 @@ Here's a short blog post about how this library came to be: http://mattweimer.ne
 
 ## Requirements
 Microsoft .NET Micro Framework 4.2 or higher
+or
+nanoFramework 1.0 or higher
 
 ## Example Usage
 
