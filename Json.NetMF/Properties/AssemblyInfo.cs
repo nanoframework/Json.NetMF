@@ -5,12 +5,17 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
+#if (NANOFRAMEWORK_V1_0)
+[assembly: AssemblyTitle("nanoFramework.Json")]
+[assembly: AssemblyDescription("JSON Serializer and Deserializer library for nanoFramework")]
+#else
 [assembly: AssemblyTitle("Json.NetMF")]
 [assembly: AssemblyDescription("JSON Serializer and Deserializer library for the .NET Micro Framework")]
+#endif
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Mike Jones, Matt Weimer")]
 [assembly: AssemblyProduct("Json.NetMF")]
-[assembly: AssemblyCopyright("Copyright © Mike Jones, Matt Weimer 2011-2013")]
+[assembly: AssemblyCopyright("Copyright © Mike Jones, Matt Weimer 2011-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

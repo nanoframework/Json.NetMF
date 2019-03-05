@@ -1,12 +1,16 @@
 ﻿// Source code is modified from Mike Jones's JSON Serialization and Deserialization library (https://www.ghielectronics.com/community/codeshare/entry/357)
 
 using System;
-using Microsoft.SPOT;
 using System.Collections;
+#if (NANOFRAMEWORK_V1_0)
+namespace nanoFramework.Json
+#else
+using Microsoft.SPOT;
 
 namespace Json.NETMF
+#endif
 {
-	internal static class StringExtensions
+    internal static class StringExtensions
 	{
         public static bool EndsWith(this string s, string value)
         {

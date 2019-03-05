@@ -5,19 +5,23 @@ using System.Collections;
 using System.Globalization;
 using System.Text;
 
+#if (NANOFRAMEWORK_V1_0)
+namespace nanoFramework.Json
+#else
 namespace Json.NETMF
+#endif
 {
-	/// <summary>
-	/// Parses JSON strings into a Hashtable.  The Hashtable contains one or more key/value pairs
-	/// (DictionaryEntry objects).  Each key is the name of a property that (hopefully) exists
-	/// in the class object that it represents.  Each value is one of the following:
-	///   Hastable - Another list of one or more DictionaryEntry objects, essentially representing
-	///              a property that is another class.
-	///   ArrayList - An array of one or more objects, which themselves can be one of the items
-	///               enumerated in this list.
-	///   Value Type - an actual value, such as a string, int, bool, Guid, DateTime, etc
-	/// </summary>
-	internal class JsonParser
+    /// <summary>
+    /// Parses JSON strings into a Hashtable.  The Hashtable contains one or more key/value pairs
+    /// (DictionaryEntry objects).  Each key is the name of a property that (hopefully) exists
+    /// in the class object that it represents.  Each value is one of the following:
+    ///   Hastable - Another list of one or more DictionaryEntry objects, essentially representing
+    ///              a property that is another class.
+    ///   ArrayList - An array of one or more objects, which themselves can be one of the items
+    ///               enumerated in this list.
+    ///   Value Type - an actual value, such as a string, int, bool, Guid, DateTime, etc
+    /// </summary>
+    internal class JsonParser
 	{
 		protected enum Token
 		{

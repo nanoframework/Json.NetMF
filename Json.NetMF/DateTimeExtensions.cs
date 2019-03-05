@@ -1,11 +1,15 @@
 ﻿// Source code is modified from Mike Jones's JSON Serialization and Deserialization library (https://www.ghielectronics.com/community/codeshare/entry/357)
 
 using System;
+#if (NANOFRAMEWORK_V1_0)
+namespace nanoFramework.Json
+#else
 using Microsoft.SPOT;
 
 namespace Json.NETMF
+#endif
 {
-	public static class DateTimeExtensions
+    public static class DateTimeExtensions
 	{
 		/// <summary>
 		/// Converts an ISO 8601 time/date format string, which is used by JSON and others,
