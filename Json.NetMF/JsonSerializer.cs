@@ -1,16 +1,20 @@
 ﻿// Source code is modified from Mike Jones's JSON Serialization and Deserialization library (https://www.ghielectronics.com/community/codeshare/entry/357)
 
 using System;
-using Microsoft.SPOT;
 using System.Reflection;
 using System.Collections;
 using System.Text;
+#if (NANOFRAMEWORK_V1_0)
+namespace nanoFramework.Json
+#else
+using Microsoft.SPOT;
 
 namespace Json.NETMF
+#endif
 {
-	/// <summary>
+    /// <summary>
     /// JSON.NetMF - JSON Serialization and Deserialization library for .NET Micro Framework
-	/// </summary>
+    /// </summary>
     public class JsonSerializer
 	{
         public JsonSerializer(DateTimeFormat dateTimeFormat = DateTimeFormat.Default)

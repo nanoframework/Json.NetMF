@@ -1,12 +1,16 @@
 // Source code is modified from Mike Jones's JSON Serialization and Deserialization library (https://www.ghielectronics.com/community/codeshare/entry/357)
 
 using System;
-using Microsoft.SPOT;
 using System.Globalization;
+#if (NANOFRAMEWORK_V1_0)
+namespace nanoFramework.Json
+#else
+using Microsoft.SPOT;
 
 namespace Json.NETMF
+#endif
 {
-	internal enum NumberStyle
+    internal enum NumberStyle
 	{
 		Decimal = 1,
 		Hexadecimal
