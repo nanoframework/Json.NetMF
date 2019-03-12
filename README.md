@@ -36,7 +36,7 @@ string json = serializer.Serialize(o);
 string json = JsonSerializer.SerializeObject(o);
 ```
 
-###Serialization
+### Serialization
 
 Pretty much any object can be serialized. 
 
@@ -83,7 +83,7 @@ Debug.Print(json);
 // Output: {"Birthday":"1988-04-23T00:00:00.000Z","LastName":"Doe","FirstName":"John"}
 ```
 
-###Deserialization
+### Deserialization
 
 Deserialization will parse your JSON string and return it contents in either ArrayList, Hashtable, double, long, string, null, bool. You will need to know what type you are expecting and cast the return object to that type 
 or manually check the type and then cast.
@@ -137,9 +137,9 @@ Debug.Print(birthday.ToString());
 // Output: "04/27/1985 00:00:00"
 ```
 
-## Nuget
+## NuGet
 
-The .NetMF version is available through Nuget (http://www.nuget.org/packages/Json.NetMF/)
+The .NetMF version is available through NuGet (http://www.nuget.org/packages/Json.NetMF/)
 
 ```
 PM> Install-Package Json.NetMF
