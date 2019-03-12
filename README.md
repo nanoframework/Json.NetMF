@@ -1,17 +1,17 @@
+# nanoFramework.Json
 # Json.NetMF
 
-JSON Serializer and Deserializer library for the .NET Micro Framework and nanoFramework
+JSON Serializer and Deserializer library for nanoFramework and .NET Micro Framework 
 
-This library is a forked and modified version of Mike Jones's JSON Serialization and Deserialization library (https://www.ghielectronics.com/community/codeshare/entry/357).
+This library is now being maintained by the nanoFramework team after being transfered from Matt Weimer.
+The library was originally forked and modified from Mike Jones's JSON Serialization and Deserialization library. 
 
 Its hopefuly faster, more lightweight, and more robust.
 
-Here's a short blog post about how this library came to be: http://mattweimer.net/Posts/Details/1
-
 ## Requirements
-Microsoft .NET Micro Framework 4.2 or higher
-or
-nanoFramework 1.0 or higher
+
+* nanoFramework 1.0 or higher
+* Microsoft .NET Micro Framework 4.2 or higher
 
 ## Example Usage
 
@@ -138,7 +138,8 @@ Debug.Print(birthday.ToString());
 ```
 
 ## Nuget
-Available through Nuget (http://www.nuget.org/packages/Json.NetMF/)
+
+The .NetMF version is available through Nuget (http://www.nuget.org/packages/Json.NetMF/)
 
 ```
 PM> Install-Package Json.NetMF
