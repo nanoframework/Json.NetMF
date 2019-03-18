@@ -217,7 +217,7 @@ jobs:
     inputs:
       sourceFolder: $(Build.SourcesDirectory)
       Contents: |
-        **\Json*.nupkg
+        **\nanoFramework.Json*.nupkg
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
       flattenFolders: true
     condition: succeeded()
