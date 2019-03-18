@@ -3,7 +3,7 @@
 
 JSON Serializer and Deserializer library for nanoFramework and .NET Micro Framework 
 
-This library is now being maintained by the nanoFramework team after being transfered from Matt Weimer.
+This library is now being maintained by the nanoFramework team after being transfered from [Matt Weimer](https://github.com/mweimer).
 The library was originally forked and modified from Mike Jones's JSON Serialization and Deserialization library. 
 
 Its hopefuly faster, more lightweight, and more robust.
