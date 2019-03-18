@@ -1,12 +1,22 @@
-# nanoFramework.Json
-# Json.NetMF
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/nanoframework/Json.NetMF/blob/master/LICENSE) [![NuGet](https://img.shields.io/nuget/dt/nanoFramework.Json.svg)]() [![#yourfirstpr](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](https://github.com/nanoframework/Home/blob/master/CONTRIBUTING.md) [![Discord](https://img.shields.io/discord/478725473862549535.svg)](https://discord.gg/gCyBu8T)
 
-JSON Serializer and Deserializer library for nanoFramework and .NET Micro Framework 
+# nanoFramework.Json (Json.NetMF)
 
-This library is now being maintained by the nanoFramework team after being transfered from [Matt Weimer](https://github.com/mweimer).
-The library was originally forked and modified from Mike Jones's JSON Serialization and Deserialization library. 
+Welcome to the JSON Serializer and Deserializer library for nanoFramework and .NET Micro Framework.
 
-Its hopefuly faster, more lightweight, and more robust.
+This library is now being maintained by the nanoFramework team after being transferred from [Matt Weimer](https://github.com/mweimer).
+The library was originally forked and modified from Mike Jones's JSON Serialization and Deserialization library.
+
+Its hopefully faster, more lightweight, and more robust.
+
+## Build status
+
+| Component | Build Status | NuGet Package |
+|:-|---|---|
+| nanoFramework.Json | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=master)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=38&branchName=master) | [![NuGet](https://img.shields.io/nuget/v/nanoFramework.Json.svg)](https://www.nuget.org/packages/nanoFramework.Json/)  |
+| nanoFramework.Json (preview) | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=develop)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=38&branchName=develop) | [![MyGet Pre Release](https://img.shields.io/myget/nanoframework-dev/vpre/nanoFramework.Json.svg)](https://www.myget.org/feed/nanoframework-dev/package/nuget/nanoFramework.Json) |
+| Json.NetMF | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=master)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=38&branchName=master) | [![NuGet](https://img.shields.io/nuget/v/Json.NetMF.svg)](https://www.nuget.org/packages/Json.NetMF/)  |
+| Json.NetMF (preview) | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=develop)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=38&branchName=develop) | [![MyGet Pre Release](https://img.shields.io/myget/nanoframework-dev/vpre/Json.NetMF.svg)](https://www.myget.org/feed/nanoframework-dev/package/nuget/Json.NetMF) |
 
 ## Requirements
 
@@ -15,14 +25,14 @@ Its hopefuly faster, more lightweight, and more robust.
 
 ## Example Usage
 
-An instance of the JsonSerializer class can be instantiated using the constructor. This will allow the serializier to remember your DateTime format preference.
+An instance of the JsonSerializer class can be instantiated using the constructor. This will allow the serializer to remember your DateTime format preference.
 
 ```c#
 JsonSerializer serializer = new JsonSerializer(DateTimeFormat.Default);
 string json = serializer.Serialize(o);
 ```
 
-Additonally, you can just call the static SerializeObject/DeserializeString methods and specifiy your DateTime format preference as an argument.
+Additionally, you can just call the static SerializeObject/DeserializeString methods and specify your DateTime format preference as an argument.
 
 ```c#
 string json = JsonSerializer.SerializeObject(o,DateTimeFormat.Default);
@@ -65,7 +75,7 @@ Debug.Print(json);
 
 Other objects will be serialized using their public properties. Only properties that have a public getter will be serialized.
 
-DateTime objects can be serialized, and their format in JSON will be ISO 8601 format by default. 
+DateTime objects can be serialized, and their format in JSON will be ISO 8601 format by default.
 
 ```c#
 public class Person
@@ -125,10 +135,11 @@ if (deserializedObject is ArrayList)
 // long: 1
 // double: 2.3450000000000002
 // long: -5
-// double: -232323.78786779998 
+// double: -232323.78786779998
 ```
 
 Extensions methods are provided to parse a DateTime string to a DateTime object
+
 ```c#
 string json = "{\"firstName\":\"John\",\"lastName\":\"Doe\",\"birthDay\":\"1985-04-27T00:00:00.000Z\"}";
 Hashtable hashTable = JsonSerializer.DeserializeString(json) as Hashtable;
@@ -137,10 +148,30 @@ Debug.Print(birthday.ToString());
 // Output: "04/27/1985 00:00:00"
 ```
 
-## NuGet
+## NuGet packages
 
-The .NetMF version is available through NuGet (http://www.nuget.org/packages/Json.NetMF/)
+The nanoFramework version is available through [NuGet](http://www.nuget.org/packages/nanoFramework.Json/)
 
+```powershell
+PM> Install-Package nanoFramework.Json
 ```
+
+The .NetMF version is available through [NuGet](http://www.nuget.org/packages/Json.NetMF/)
+
+```powershell
 PM> Install-Package Json.NetMF
 ```
+
+## Feedback and documentation
+
+For documentation, providing feedback, issues and finding out how to contribute please refer to the [Home repo](https://github.com/nanoframework/Home).
+
+Join our Discord community [here](https://discord.gg/gCyBu8T).
+
+## License
+
+The **nanoFramework.Json** is licensed under the [MIT](LICENSE) license.
+
+## Code of Conduct
+This project has adopted the code of conduct defined by the [Contributor Covenant](http://contributor-covenant.org/)
+to clarify expected behavior in our community.
