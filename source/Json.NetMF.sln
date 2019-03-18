@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.NetMF43", "Json.NetMF\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.NetMF44", "Json.NetMF\Json.NetMF44.csproj", "{F5E7951D-D122-4422-A441-3852646DDCE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "..\Test\NetMF\Test.csproj", "{A1225C41-D97A-4F2F-8159-F8D9F90E4509}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\NetMF\Test.csproj", "{A1225C41-D97A-4F2F-8159-F8D9F90E4509}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
