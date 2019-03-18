@@ -14,7 +14,7 @@
     <iconUrl>https://secure.gravatar.com/avatar/97d0e092247f0716db6d4b47b7d1d1ad</iconUrl>
     <copyright>Copyright (c) 2011-2013 Mike Jones, Matt Weimer</copyright>
     <licenseUrl>https://github.com/nanoFramework/Json.NetMF/blob/master/LICENSE</licenseUrl>
-    <description></description>
+    <description>JSON Serializer and Deserializer library for the .NET  Micro Framework.</description>
     <summary>JSON Serializer and Deserializer library for the .NET Micro Framework</summary>
     <tags>netmf json</tags>
     <frameworkAssemblies>
