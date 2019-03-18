@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>nanoFramework.Json</id>
-    <title>A compact version of AMQP.Net Lite for nanoFramework</title>
+    <title>JSON Serializer and Deserializer library for the .NET nanoFramework</title>
     <version>0.0.0</version>
     <authors>nanoFramework project contributors</authors>
     <owners>nanoFramework project contributors</owners>
