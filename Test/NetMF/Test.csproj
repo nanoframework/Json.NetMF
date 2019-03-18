@@ -52,7 +52,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Json.NetMF\Json.NetMF44.csproj">
+    <ProjectReference Include="..\..\source\Json.NetMF\Json.NetMF44.csproj">
       <Project>{F5E7951D-D122-4422-A441-3852646DDCE1}</Project>
       <Name>Json.NetMF44</Name>
     </ProjectReference>
