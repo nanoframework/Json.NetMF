@@ -27,27 +27,23 @@ resources:
       name: nanoframework/nf-tools
       endpoint: nanoframework
 
+variables:
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
 jobs:
 
+###############################################
 # build
-- job: Build_All
+- job: Build_NETMF
+
+  pool:
+    vmImage: 'vs2015-win2012r2'
 
   variables:
+    solution: 'source/Json.NetMF.sln'
     buildPlatform: 'Any CPU'
     buildConfiguration: 'Release'
-
-  strategy:
-    matrix:
-      Build_NETMF:
-        vmImage: 'vs2015-win2012r2'
-        solution: 'source/Json.NetMF.sln'
-        nuspecFile: 'Json.NetMF'
-        installNETMF: 'true'
-      Build_nF:
-        vmImage: 'VS2017-Win2016'
-        solution: 'source/Json.nanoFramework.sln'
-        nuspecFile: 'Json.nanoFramework'
-        installNETMF: 'false'
 
   steps:
 
@@ -57,7 +53,6 @@ jobs:
       git config --global user.email "nanoframework@outlook.com"
       git config --global user.name "nfbot"
     displayName: Setup git identity
-    condition: eq(variables['GO'], true)
 
   - task: PowerShell@2
     inputs:
@@ -83,11 +78,99 @@ jobs:
 
           Write-Output "NETMF44 Installed"
 
-    condition: eq(variables['installNETMF'], true)
     displayName: Install .NETMF SDKs
 
+  - task: NuGetToolInstaller@0
+
+  - task: NuGetCommand@2
+    inputs:
+      restoreSolution: '$(solution)'
+      feedsToUse: config
+      nugetConfigPath: source/NuGet.config
+    displayName: NuGet restore
+
+  - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+      platform: '$(buildPlatform)'
+      msbuildArgs: '/p:PublicRelease=true'
+      configuration: '$(buildConfiguration)'
+
+  - task: PowerShell@2
+    inputs:
+        targetType: 'inline'
+        script: |
+            $MyNuGetVersion = $env:NBGV_NuGetPackageVersion -replace "\-g$env:NBGV_GitCommitIdShort", ""
+
+            # replace preview with alpha if this is a PR build
+            if($env:Build_Reason -eq 'PullRequest')
+            {
+              $MyNuGetVersion = $MyNuGetVersion -replace "preview", "alpha"
+            }
+
+            Write-Host "NuGet build number is $MyNuGetVersion"
+
+            Write-Host "$("##vso[task.setvariable variable=MY_NUGET_VERSION]")$MyNuGetVersion"
+    condition: succeeded()
+    displayName: Get NuGet build number
+    
+  - task: NuGetCommand@2
+    inputs:
+      command: 'custom' 
+      arguments: 'pack nuspec\Json.NetMF.nuspec -Version $(MY_NUGET_VERSION) -BasePath .\'
+    displayName: Pack NuGet
+
+  - task: CopyFiles@1
+    inputs:
+      sourceFolder: $(Build.SourcesDirectory)
+      Contents: |
+        **\Json*.nupkg
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      flattenFolders: true
+    condition: succeeded()
+    displayName: Collecting deployable artifacts
+
+  # publish artifacts (only possible if this is not a PR originated on a fork)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: deployables
+      ArtifactType: Container
+    condition: and( succeeded(), ne(variables['system.pullrequest.isfork'], true) )
+    displayName: Publish deployables artifacts
+
+  # push NuGet packages to MyGet feed (always happens except on PR builds)
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+      publishFeedCredentials: 'MyGet'
+    condition: succeeded()
+    displayName: Push NuGet packages to MyGet
+
+#######################################
+# build
+- job: Build_nF
+
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  variables:
+    solution: 'source/Json.nanoFramework.sln'
+    buildPlatform: 'Any CPU'
+    buildConfiguration: 'Release'
+
+  steps:
+
+  - checkout: self
+
+  - script: |
+      git config --global user.email "nanoframework@outlook.com"
+      git config --global user.name "nfbot"
+    displayName: Setup git identity
+
   - task: InstallnFBuildComponents@1
-    condition: eq(variables['installNETMF'], false)
     displayName: Install nanoFramework MSBuild components
 
   - task: NuGetToolInstaller@0
@@ -127,7 +210,7 @@ jobs:
   - task: NuGetCommand@2
     inputs:
       command: 'custom' 
-      arguments: 'pack nuspec\$(nuspecFile).nuspec -Version $(MY_NUGET_VERSION) -BasePath .\'
+      arguments: 'pack nuspec\Json.nanoFramework.nuspec -Version $(MY_NUGET_VERSION) -BasePath .\'
     displayName: Pack NuGet
 
   - task: CopyFiles@1
@@ -163,8 +246,9 @@ jobs:
 # report build failure to Discord
 - job: Report_Build_Failure
   dependsOn:
-  - Build_All
-  condition: failed('Build_All')
+  - Build_NETMF
+  - Build_nF 
+  condition: or( failed('Build_NETMF'), failed('Build_nF'))
 
   pool:
     vmImage: 'VS2017-Win2016'
