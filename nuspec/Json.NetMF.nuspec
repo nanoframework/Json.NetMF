@@ -5,7 +5,7 @@
     <title>JSON Serializer and Deserializer library for the .NET Micro Framework</title>
     <version>0.0.0</version>
     <authors>Matt Weimer</authors>
-    <owners>nanoFramework project contributors/owners>
+    <owners>nanoFramework project contributors</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <releaseNotes>
     </releaseNotes>
