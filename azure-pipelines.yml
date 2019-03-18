@@ -59,8 +59,6 @@ jobs:
     displayName: Setup git identity
     condition: eq(variables['GO'], true)
 
-  - task: NuGetToolInstaller@0
-
   - task: PowerShell@2
     inputs:
       targetType: 'inline'
@@ -92,22 +90,44 @@ jobs:
     condition: eq(variables['installNETMF'], false)
     displayName: Install nanoFramework MSBuild components
 
+  - task: NuGetToolInstaller@0
+
   - task: NuGetCommand@2
     inputs:
       restoreSolution: '$(solution)'
-      verbosityRestore: quiet      
+      feedsToUse: config
+      nugetConfigPath: source/NuGet.config
     displayName: NuGet restore
 
   - task: VSBuild@1
     inputs:
       solution: '$(solution)'
       platform: '$(buildPlatform)'
+      msbuildArgs: '/p:PublicRelease=true'
       configuration: '$(buildConfiguration)'
 
+  - task: PowerShell@2
+    inputs:
+        targetType: 'inline'
+        script: |
+            $MyNuGetVersion = $env:NBGV_NuGetPackageVersion -replace "\-g$env:NBGV_GitCommitIdShort", ""
+
+            # replace preview with alpha if this is a PR build
+            if($env:Build_Reason -eq 'PullRequest')
+            {
+              $MyNuGetVersion = $MyNuGetVersion -replace "preview", "alpha"
+            }
+
+            Write-Host "NuGet build number is $MyNuGetVersion"
+
+            Write-Host "$("##vso[task.setvariable variable=MY_NUGET_VERSION]")$MyNuGetVersion"
+    condition: succeeded()
+    displayName: Get NuGet build number
+    
   - task: NuGetCommand@2
     inputs:
       command: 'custom' 
-      arguments: 'pack nuspec\$(nuspecFile).nuspec -Version $(NUGET_VERSION) -BasePath .\'
+      arguments: 'pack nuspec\$(nuspecFile).nuspec -Version $(MY_NUGET_VERSION) -BasePath .\'
     displayName: Pack NuGet
 
   - task: CopyFiles@1
