@@ -1,0 +1,162 @@
+trigger:
+  branches:
+    include:
+    - master
+    - develop
+    - release/*
+    - refs/tags/*
+  paths:
+    exclude:
+    - CHANGELOG.md
+    - /*.md
+    - .gitignore
+
+pr:
+  branches:
+    include:
+    - master
+    - develop
+    - release/*
+  autoCancel: true
+
+# add nf-tools repo to resources (for Azure Pipelines templates)
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: nanoframework/nf-tools
+      endpoint: nanoframework
+
+jobs:
+
+# build
+- job: Build_All
+
+  variables:
+    buildPlatform: 'Any CPU'
+    buildConfiguration: 'Release'
+
+  strategy:
+    matrix:
+      Build_NETMF:
+        vmImage: 'vs2015-win2012r2'
+        solution: 'source/Json.NetMF.sln'
+        nuspecFile: 'Json.NetMF'
+        installNETMF: 'true'
+      Build_nF:
+        vmImage: 'VS2017-Win2016'
+        solution: 'source/Json.nanoFramework.sln'
+        nuspecFile: 'Json.nanoFramework'
+        installNETMF: 'false'
+
+  steps:
+
+  - checkout: self
+
+  - script: |
+      git config --global user.email "nanoframework@outlook.com"
+      git config --global user.name "nfbot"
+    displayName: Setup git identity
+    condition: eq(variables['GO'], true)
+
+  - task: NuGetToolInstaller@0
+
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+          Write-Output "Installing .NET MicroFramework 4.3 ..."
+
+          $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK43.MSI"
+
+          (New-Object Net.WebClient).DownloadFile('https://github.com/Azure/amqpnetlite/releases/download/netmf4.3/MicroFrameworkSDK4.3.MSI', $msiPath)
+
+          & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf43.log | Write-Output
+
+          Write-Output "NETMF43 Installed"
+
+          Write-Output "Installing .NET MicroFramework 4.4 ..."
+
+          $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK44.MSI"
+
+          (New-Object Net.WebClient).DownloadFile('https://github.com/NETMF/netmf-interpreter/releases/download/v4.4-RTW-20-Oct-2015/MicroFrameworkSDK.MSI', $msiPath)
+
+          & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf44.log | Write-Output
+
+          Write-Output "NETMF44 Installed"
+
+    condition: eq(variables['installNETMF'], true)
+    displayName: Install .NETMF SDKs
+
+  - task: InstallnFBuildComponents@1
+    condition: eq(variables['installNETMF'], false)
+    displayName: Install nanoFramework MSBuild components
+
+  - task: NuGetCommand@2
+    inputs:
+      restoreSolution: '$(solution)'
+      verbosityRestore: quiet      
+    displayName: NuGet restore
+
+  - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+
+  - task: NuGetCommand@2
+    inputs:
+      command: 'custom' 
+      arguments: 'pack nuspec\$(nuspecFile).nuspec -Version $(NUGET_VERSION) -BasePath .\'
+    displayName: Pack NuGet
+
+  - task: CopyFiles@1
+    inputs:
+      sourceFolder: $(Build.SourcesDirectory)
+      Contents: |
+        **\Json*.nupkg
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      flattenFolders: true
+    condition: succeeded()
+    displayName: Collecting deployable artifacts
+
+  # publish artifacts (only possible if this is not a PR originated on a fork)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: deployables
+      ArtifactType: Container
+    condition: and( succeeded(), ne(variables['system.pullrequest.isfork'], true) )
+    displayName: Publish deployables artifacts
+
+  # push NuGet packages to MyGet feed (always happens except on PR builds)
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+      publishFeedCredentials: 'MyGet'
+    condition: succeeded()
+    displayName: Push NuGet packages to MyGet
+
+##################################
+# report build failure to Discord
+- job: Report_Build_Failure
+  dependsOn:
+  - Build_All
+  condition: failed('Build_All')
+
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  steps:
+
+  - checkout: self
+    fetchDepth: 1
+
+  # step from template @ nf-tools repo
+  - template: azure-pipelines-templates/discord-webhook.yml@templates  
+    parameters:
+      status: 'failure'
+      webhookUrl: '$(DiscordWebhook)'
+      message: ''
