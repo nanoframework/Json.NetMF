@@ -23,14 +23,14 @@
     </frameworkAssemblies>
   </metadata>
   <files>
-    <file src="bin\Release\Json.NetMF.NetMF42\*.*" target="lib\netmf42" />
-    <file src="bin\Release\Json.NetMF.NetMF42\le\*.p*" target="lib\netmf42\le" />
-    <file src="bin\Release\Json.NetMF.NetMF42\be\*.p*" target="lib\netmf42\be" />
-    <file src="bin\Release\Json.NetMF.NetMF43\*.*" target="lib\netmf43" />
-    <file src="bin\Release\Json.NetMF.NetMF43\le\*.p*" target="lib\netmf43\le" />
-    <file src="bin\Release\Json.NetMF.NetMF43\be\*.p*" target="lib\netmf43\be" />
-    <file src="bin\Release\Json.NetMF.NetMF44\*.*" target="lib\netmf44" />
-    <file src="bin\Release\Json.NetMF.NetMF44\le\*.p*" target="lib\netmf44\le" />
-    <file src="bin\Release\Json.NetMF.NetMF44\be\*.p*" target="lib\netmf44\be" />
+    <file src="bin\Release\Json.NetMF42\*.*" target="lib\netmf42" />
+    <file src="bin\Release\Json.NetMF42\le\*.p*" target="lib\netmf42\le" />
+    <file src="bin\Release\Json.NetMF42\be\*.p*" target="lib\netmf42\be" />
+    <file src="bin\Release\Json.NetMF43\*.*" target="lib\netmf43" />
+    <file src="bin\Release\Json.NetMF43\le\*.p*" target="lib\netmf43\le" />
+    <file src="bin\Release\Json.NetMF43\be\*.p*" target="lib\netmf43\be" />
+    <file src="bin\Release\Json.NetMF44\*.*" target="lib\netmf44" />
+    <file src="bin\Release\Json.NetMF44\le\*.p*" target="lib\netmf44\le" />
+    <file src="bin\Release\Json.NetMF44\be\*.p*" target="lib\netmf44\be" />
 </files>
 </package>

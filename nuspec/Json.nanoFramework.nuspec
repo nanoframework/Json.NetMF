@@ -22,10 +22,10 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="nanoFramework.Json\bin\Release\nanoFramework.Json.dll" target="lib\nanoFramework.Json.dll" />
-    <file src="nanoFramework.Json\bin\Release\nanoFramework.Json.pdb" target="lib\nanoFramework.Json.pdb" />
-    <file src="nanoFramework.Json\bin\Release\nanoFramework.Json.pdbx" target="lib\nanoFramework.Json.pdbx" />
-    <file src="nanoFramework.Json\bin\Release\nanoFramework.Json.pe" target="lib\nanoFramework.Json.pe" />
-    <file src="nanoFramework.Json\bin\Release\nanoFramework.Json.xml" target="lib\nanoFramework.Json.xml" />
+    <file src="bin\Release\nanoFramework.Json\nanoFramework.Json.dll" target="lib\nanoFramework.Json.dll" />
+    <file src="bin\Release\nanoFramework.Json\nanoFramework.Json.pdb" target="lib\nanoFramework.Json.pdb" />
+    <file src="bin\Release\nanoFramework.Json\nanoFramework.Json.pdbx" target="lib\nanoFramework.Json.pdbx" />
+    <file src="bin\Release\nanoFramework.Json\nanoFramework.Json.pe" target="lib\nanoFramework.Json.pe" />
+    <file src="bin\Release\nanoFramework.Json\nanoFramework.Json.xml" target="lib\nanoFramework.Json.xml" />
   </files>
 </package>
