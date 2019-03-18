@@ -1,1 +1,0 @@
-nuget pack Json.NetMF.csproj -Prop Configuration=Release;Platform=AnyCPU -Build
