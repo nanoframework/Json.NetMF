@@ -32,22 +32,12 @@
     <OutputPath>..\..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\Json.NetMF\DateTimeExtensions.cs">
-      <Link>DateTimeExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Json.NetMF\JsonParser.cs">
-      <Link>JsonParser.cs</Link>
-    </Compile>
-    <Compile Include="..\Json.NetMF\JsonSerializer.cs">
-      <Link>JsonSerializer.cs</Link>
-    </Compile>
-    <Compile Include="..\Json.NetMF\NumberExtensions.cs">
-      <Link>NumberExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Json.NetMF\Properties\AssemblyInfo.cs" Link="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\Json.NetMF\StringExtensions.cs">
-      <Link>StringExtensions.cs</Link>
-    </Compile>
+    <Compile Include="..\Json.NetMF\DateTimeExtensions.cs" Link="DateTimeExtensions.cs" />
+    <Compile Include="..\Json.NetMF\JsonParser.cs" Link="JsonParser.cs" />
+    <Compile Include="..\Json.NetMF\JsonSerializer.cs" Link="JsonSerializer.cs" />
+    <Compile Include="..\Json.NetMF\NumberExtensions.cs" Link="NumberExtensions.cs" />
+    <Compile Include="..\Json.NetMF\StringExtensions.cs" Link="StringExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib, Version=1.1.1.7, Culture=neutral, PublicKeyToken=c07d481e9758c731">
