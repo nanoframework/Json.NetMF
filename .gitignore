@@ -125,3 +125,6 @@ PushNuget.bat
 
 # Visual Studio cache/options directory
 .vs/
+
+#SoundCloud
+*.sonarqube/
