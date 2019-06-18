@@ -6,7 +6,7 @@
   },
   "semVer1NumericIdentifierPadding": 3,
   "nugetPackageVersion": {
-    "semVer": 1
+    "semVer": 2
    },
   "publicReleaseRefSpec": [
     "^refs/heads/master$",
