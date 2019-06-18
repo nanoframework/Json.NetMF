@@ -149,6 +149,52 @@ jobs:
     condition: succeeded()
     displayName: Push NuGet packages to MyGet
 
+  # push NuGet class lib package to NuGet (happens on tag builds for any branch)
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      allowPackageConflicts: true
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+      publishFeedCredentials: 'NuGet'
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v') )
+    continueOnError: true
+    displayName: Push NuGet packages to NuGet
+
+  # create or update GitHub release
+  - task: GitHubRelease@0
+    inputs:
+      gitHubConnection: nanoframework-token
+      repositoryName: '$(Build.Repository.Name)'
+      action: create
+      target: '$(Build.SourceVersion)'
+      tagSource: manual
+      tag: 'v$(MY_NUGET_VERSION)'
+      title: 'Json.NetMF v$(MY_NUGET_VERSION)'
+      releaseNotesSource: input
+      releaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from nanoFramework MyGet development feed</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.myget.org/feed/nanoframework-dev/package/nuget/Json.NetMF/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
+      isDraft: true
+      isPreRelease: true
+    condition: and( succeeded(), not( startsWith(variables['Build.SourceBranch'], 'refs/pull') ), not( startsWith(variables['Build.SourceBranch'], 'refs/tags/v') ) )
+    displayName: Create/Update GitHub release
+
+  # create or update GitHub release ON tags from release or master branches
+  - task: GitHubRelease@0
+    inputs:
+      gitHubConnection: nanoframework-token
+      repositoryName: '$(Build.Repository.Name)'
+      action: edit
+      target: '$(Build.SourceVersion)'
+      tagSource: manual
+      tag: 'v$(MY_NUGET_VERSION)'
+      title: 'Json.NetMF v$(MY_NUGET_VERSION)'
+      releaseNotesSource: input
+      releaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from NuGet</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.nuget.org/packages/Json.NetMF/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
+      isDraft: false
+      isPreRelease: true
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), contains(variables['Build.SourceBranch'], 'preview') )
+    displayName: Create/Update GitHub PREVIEW release
+
 #######################################
 # build
 - job: Build_nF
@@ -241,6 +287,52 @@ jobs:
       publishFeedCredentials: 'MyGet'
     condition: succeeded()
     displayName: Push NuGet packages to MyGet
+
+  # push NuGet class lib package to NuGet (happens on tag builds for any branch)
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      allowPackageConflicts: true
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+      publishFeedCredentials: 'NuGet'
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v') )
+    continueOnError: true
+    displayName: Push NuGet packages to NuGet
+
+  # create or update GitHub release
+  - task: GitHubRelease@0
+    inputs:
+      gitHubConnection: nanoframework-token
+      repositoryName: '$(Build.Repository.Name)'
+      action: create
+      target: '$(Build.SourceVersion)'
+      tagSource: manual
+      tag: 'v$(MY_NUGET_VERSION)'
+      title: 'nanoframework.Json v$(MY_NUGET_VERSION)'
+      releaseNotesSource: input
+      releaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NF.md).<br><br><h4>Install from nanoFramework MyGet development feed</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.myget.org/feed/nanoframework-dev/package/nuget/nanoFramework.Json/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
+      isDraft: true
+      isPreRelease: true
+    condition: and( succeeded(), not( startsWith(variables['Build.SourceBranch'], 'refs/pull') ), not( startsWith(variables['Build.SourceBranch'], 'refs/tags/v') ) )
+    displayName: Create/Update GitHub release
+
+  # create or update GitHub release ON tags from release or master branches
+  - task: GitHubRelease@0
+    inputs:
+      gitHubConnection: nanoframework-token
+      repositoryName: '$(Build.Repository.Name)'
+      action: edit
+      target: '$(Build.SourceVersion)'
+      tagSource: manual
+      tag: 'v$(MY_NUGET_VERSION)'
+      title: 'nanoframework.Json v$(MY_NUGET_VERSION)'
+      releaseNotesSource: input
+      releaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from NuGet</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.nuget.org/packages/nanoFramework.Json/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
+      isDraft: false
+      isPreRelease: true
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), contains(variables['Build.SourceBranch'], 'preview') )
+    displayName: Create/Update GitHub PREVIEW release 
 
 ##################################
 # report build failure to Discord
