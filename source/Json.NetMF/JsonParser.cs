@@ -5,7 +5,7 @@ using System.Collections;
 using System.Globalization;
 using System.Text;
 
-#if (NANOFRAMEWORK_V1_0)
+#if (NANOFRAMEWORK_1_0)
 namespace nanoFramework.Json
 #else
 namespace Json.NETMF
