@@ -175,6 +175,7 @@ jobs:
       releaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from nanoFramework MyGet development feed</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.myget.org/feed/nanoframework-dev/package/nuget/Json.NetMF/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
       isDraft: true
       isPreRelease: true
+      addChangeLog: false
     condition: and( succeeded(), not( startsWith(variables['Build.SourceBranch'], 'refs/pull') ), not( startsWith(variables['Build.SourceBranch'], 'refs/tags/v') ) )
     displayName: Create/Update GitHub release
 
@@ -192,6 +193,7 @@ jobs:
       releaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from NuGet</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.nuget.org/packages/Json.NetMF/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
       isDraft: false
       isPreRelease: true
+      addChangeLog: false
     condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), contains(variables['Build.SourceBranch'], 'preview') )
     displayName: Create/Update GitHub PREVIEW release
 
@@ -314,6 +316,7 @@ jobs:
       releaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NF.md).<br><br><h4>Install from nanoFramework MyGet development feed</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.myget.org/feed/nanoframework-dev/package/nuget/nanoFramework.Json/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
       isDraft: true
       isPreRelease: true
+      addChangeLog: false
     condition: and( succeeded(), not( startsWith(variables['Build.SourceBranch'], 'refs/pull') ), not( startsWith(variables['Build.SourceBranch'], 'refs/tags/v') ) )
     displayName: Create/Update GitHub release
 
@@ -331,6 +334,7 @@ jobs:
       releaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from NuGet</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.nuget.org/packages/nanoFramework.Json/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
       isDraft: false
       isPreRelease: true
+      addChangeLog: false
     condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), contains(variables['Build.SourceBranch'], 'preview') )
     displayName: Create/Update GitHub PREVIEW release 
 
