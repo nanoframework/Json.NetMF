@@ -33,9 +33,54 @@ variables:
 
 jobs:
 
+##############################
+- job: Get_Build_Options
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  steps:
+  - checkout: self
+
+    # get commint message
+  - powershell: |
+      git config --global user.email "nanoframework@outlook.com"
+      git config --global user.name "nfbot"
+
+      $auth = "basic $([System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes(":$(GitHubToken)"))))"
+
+      $commit = Invoke-RestMethod -Uri "https://api.github.com/repos/nanoframework/nf-tools/commits/$(Build.SourceVersion)" -Header @{"Authorization"="$auth"} -ContentType "application/json" -Method GET
+      Write-host "Files changed:"
+      $commit.files | % {$_.filename}
+
+      # order matters: source files are on .NETMF folder
+      if ( $commit.files.filename -like "*nanoFramework.Json*" )
+      {
+        echo "##vso[task.setvariable variable=BUILD_NF;isOutput=true]true"  
+      }
+      else
+      {
+        echo "##vso[task.setvariable variable=BUILD_NF;isOutput=true]False"  
+      }
+
+      if ( $commit.files.filename -like "*Json.NetMF*" )
+      {
+        echo "##vso[task.setvariable variable=BUILD_NETMF;isOutput=true]true"
+        echo "##vso[task.setvariable variable=BUILD_NF;isOutput=true]true"
+      }
+      else
+      {
+        echo "##vso[task.setvariable variable=BUILD_NETMF;isOutput=true]False"
+      }     
+
+    name: BuildOptions
+    displayName: get list of changed files
+
 ###############################################
 # build
 - job: Build_NETMF
+  condition: eq( dependencies.Get_Build_Options.outputs['BuildOptions.BUILD_NETMF'], true )
+  dependsOn:
+  - Get_Build_Options
 
   pool:
     vmImage: 'vs2015-win2012r2'
@@ -161,6 +206,27 @@ jobs:
     continueOnError: true
     displayName: Push NuGet packages to NuGet
 
+  - powershell: |
+      # get subject and commit message for commit
+      $commitMessage = git log --format='%B' -1
+
+      # need to flatten message by removing new lines
+      $commitMessage = $commitMessage -replace "`r`n", " "
+
+      if($commitMessage -like "*PUBLISH_RELEASE*")
+      {
+        # set variable
+        Write-Host "$("##vso[task.setvariable variable=RELEASE_DRAFT]")false"
+        Write-Host "Release draft: FALSE"
+      }
+      else
+      {
+        # set variable
+        Write-Host "$("##vso[task.setvariable variable=RELEASE_DRAFT]")true"
+        Write-Host "Release draft: TRUE"
+      }
+
+    displayName: set release draft var
   # create or update GitHub release
   - task: GitHubReleasePublish@1
     inputs:
@@ -171,11 +237,12 @@ jobs:
       githubReleaseTitle: 'Json.NetMF v$(MY_NUGET_VERSION)'
       githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from nanoFramework MyGet development feed</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.myget.org/feed/nanoframework-dev/package/nuget/Json.NetMF/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
       githubTargetCommitsh: $(Build.SourceVersion)
-      githubReleaseDraft: true
+      githubReleaseDraft: $(RELEASE_DRAFT)
       githubReleasePrerelease: true
       githubReuseDraftOnly: true
       githubReuseRelease: true
       githubEditRelease: true
+      githubDeleteEmptyTag: true
       githubReleaseAsset: '$(Build.ArtifactStagingDirectory)/*'
     condition: and( succeeded(), not( startsWith(variables['Build.SourceBranch'], 'refs/pull') ), not( startsWith(variables['Build.SourceBranch'], 'refs/tags/v') ) )
     displayName: Create/Update GitHub release
@@ -190,18 +257,42 @@ jobs:
       githubReleaseTitle: 'Json.NetMF v$(MY_NUGET_VERSION)'
       githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from NuGet</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.nuget.org/packages/Json.NetMF/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
       githubTargetCommitsh: $(Build.SourceVersion)
-      githubReleaseDraft: false
-      githubReleasePrerelease: false
+      githubReleaseDraft: $(RELEASE_DRAFT)
+      githubReleasePrerelease: true
       githubReuseDraftOnly: false
       githubReuseRelease: true
       githubEditRelease: true
+      githubDeleteEmptyTag: true
+      githubReleaseAsset: '$(Build.ArtifactStagingDirectory)/$(nugetPackageName).$(MY_NUGET_VERSION).nupkg'
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), contains(variables['Build.SourceBranch'], 'preview') )
+    displayName: Create/Update GitHub PREVIEW release 
+
+  # create or update GitHub release ON tags from release or master branches
+  - task: GitHubReleasePublish@1
+    inputs:
+      githubEndpoint: 'nanoframework'
+      githubOwner: 'nanoframework'
+      githubRepositoryName: 'Json.NetMF'
+      githubTag: 'v$(MY_NUGET_VERSION)-NETMF'
+      githubReleaseTitle: 'Json.NetMF v$(MY_NUGET_VERSION)'
+      githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from NuGet</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.nuget.org/packages/Json.NetMF/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
+      githubTargetCommitsh: $(Build.SourceVersion)
+      githubReleaseDraft: false
+      githubReleasePrerelease: false
+      githubReuseDraftOnly: false
+      githubReuseRelease: false
+      githubEditRelease: false
+      githubDeleteEmptyTag: true
       githubReleaseAsset: '$(Build.ArtifactStagingDirectory)/*.vsix'
-    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), contains(variables['Build.SourceBranch'], 'vs2019'), or( eq(variables['Build.SourceBranchName'], 'master'), contains(variables['Build.SourceBranchName'], 'release') ) )
-    displayName: Create/Update GitHub release on TAGs
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), not(contains(variables['Build.SourceBranch'], 'preview') ) )
+    displayName: Create/Update GitHub stable release
 
 #######################################
 # build
 - job: Build_nF
+  condition: eq( dependencies.Get_Build_Options.outputs['BuildOptions.BUILD_NF'], true )
+  dependsOn:
+  - Get_Build_Options
 
   pool:
     vmImage: 'VS2017-Win2016'
@@ -304,6 +395,27 @@ jobs:
     continueOnError: true
     displayName: Push NuGet packages to NuGet
 
+  - powershell: |
+      # get subject and commit message for commit
+      $commitMessage = git log --format='%B' -1
+
+      # need to flatten message by removing new lines
+      $commitMessage = $commitMessage -replace "`r`n", " "
+
+      if($commitMessage -like "*PUBLISH_RELEASE*")
+      {
+        # set variable
+        Write-Host "$("##vso[task.setvariable variable=RELEASE_DRAFT]")false"
+        Write-Host "Release draft: FALSE"
+      }
+      else
+      {
+        # set variable
+        Write-Host "$("##vso[task.setvariable variable=RELEASE_DRAFT]")true"
+        Write-Host "Release draft: TRUE"
+      }
+
+    displayName: set release draft var
   # create or update GitHub release
   - task: GitHubReleasePublish@1
     inputs:
@@ -314,11 +426,12 @@ jobs:
       githubReleaseTitle: 'nanoframework.Json v$(MY_NUGET_VERSION)'
       githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NF.md).<br><br><h4>Install from nanoFramework MyGet development feed</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.myget.org/feed/nanoframework-dev/package/nuget/nanoFramework.Json/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
       githubTargetCommitsh: $(Build.SourceVersion)
-      githubReleaseDraft: true
+      githubReleaseDraft: $(RELEASE_DRAFT)
       githubReleasePrerelease: true
       githubReuseDraftOnly: true
       githubReuseRelease: true
       githubEditRelease: true
+      githubDeleteEmptyTag: true
       githubReleaseAsset: '$(Build.ArtifactStagingDirectory)/*'
     condition: and( succeeded(), not( startsWith(variables['Build.SourceBranch'], 'refs/pull') ), not( startsWith(variables['Build.SourceBranch'], 'refs/tags/v') ) )
     displayName: Create/Update GitHub release
@@ -333,13 +446,34 @@ jobs:
       githubReleaseTitle: 'nanoframework.Json v$(MY_NUGET_VERSION)'
       githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from NuGet</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.nuget.org/packages/nanoFramework.Json/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
       githubTargetCommitsh: $(Build.SourceVersion)
-      githubReleaseDraft: false
-      githubReleasePrerelease: false
+      githubReleaseDraft: $(RELEASE_DRAFT)
+      githubReleasePrerelease: true
       githubReuseDraftOnly: false
       githubReuseRelease: true
       githubEditRelease: true
+      githubDeleteEmptyTag: true
+      githubReleaseAsset: '$(Build.ArtifactStagingDirectory)/$(nugetPackageName).$(MY_NUGET_VERSION).nupkg'
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), contains(variables['Build.SourceBranch'], 'preview') )
+    displayName: Create/Update GitHub PREVIEW release 
+
+  # create or update GitHub release ON tags from release or master branches
+  - task: GitHubReleasePublish@1
+    inputs:
+      githubEndpoint: 'nanoframework'
+      githubOwner: 'nanoframework'
+      githubRepositoryName: 'Json.NetMF'
+      githubTag: 'v$(MY_NUGET_VERSION)-NF'
+      githubReleaseTitle: 'nanoframework.Json v$(MY_NUGET_VERSION)'
+      githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from NuGet</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.nuget.org/packages/nanoFramework.Json/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
+      githubTargetCommitsh: $(Build.SourceVersion)
+      githubReleaseDraft: false
+      githubReleasePrerelease: false
+      githubReuseDraftOnly: false
+      githubReuseRelease: false
+      githubEditRelease: false
+      githubDeleteEmptyTag: true
       githubReleaseAsset: '$(Build.ArtifactStagingDirectory)/*.vsix'
-    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), contains(variables['Build.SourceBranch'], 'vs2019'), or( eq(variables['Build.SourceBranchName'], 'master'), contains(variables['Build.SourceBranchName'], 'release') ) )
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), not(contains(variables['Build.SourceBranch'], 'preview') ) )
     displayName: Create/Update GitHub release on TAGs
 
 ##################################
