@@ -48,11 +48,12 @@ jobs:
 
       $auth = "basic $([System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes(":$(GitHubToken)"))))"
 
-      $commit = Invoke-RestMethod -Uri "https://api.github.com/repos/nanoframework/nf-tools/commits/$(Build.SourceVersion)" -Header @{"Authorization"="$auth"} -ContentType "application/json" -Method GET
+      $commit = Invoke-RestMethod -Uri "https://api.github.com/repos/nanoframework/Json.NetMF/commits/$(Build.SourceVersion)" -Header @{"Authorization"="$auth"} -ContentType "application/json" -Method GET
       Write-host "Files changed:"
       $commit.files | % {$_.filename}
 
       # order matters: source files are on .NETMF folder
+      # check that last so BUILD_NF can be overriden if needed
       if ( $commit.files.filename -like "*nanoFramework.Json*" )
       {
         echo "##vso[task.setvariable variable=BUILD_NF;isOutput=true]true"  
