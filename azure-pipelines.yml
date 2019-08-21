@@ -237,7 +237,7 @@ jobs:
       githubRepositoryName: 'Json.NetMF'
       githubTag: 'v$(MY_NUGET_VERSION)-NETMF'
       githubReleaseTitle: 'Json.NetMF v$(MY_NUGET_VERSION)'
-      githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from nanoFramework AzureArtifacts development feed</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://dev.azure.com/nanoframework/feed/_packaging?_a=package&feed=sandbox&view=overview&package=nanoFramework.Json&protocolType=NuGet&version=$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
+      githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from nanoFramework AzureArtifacts development feed</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://dev.azure.com/nanoframework/feed/_packaging?_a=package&feed=sandbox&view=overview&package=Json.NetMF&protocolType=NuGet&version=$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
       githubTargetCommitsh: $(Build.SourceVersion)
       githubReleaseDraft: $(RELEASE_DRAFT)
       githubReleasePrerelease: true
