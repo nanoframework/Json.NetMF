@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("nanoFramework.Json")]
 [assembly: AssemblyDescription("JSON Serializer and Deserializer library for nanoFramework")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("nanoFramework Contributors")]
+[assembly: AssemblyCompany("Mike Jones, Matt Weimer, nanoFramework Contributors")]
 [assembly: AssemblyProduct("Json.nanoFramework")]
-[assembly: AssemblyCopyright("Copyright © nanoFramework Contributors 2019")]
+[assembly: AssemblyCopyright("Copyright © Mike Jones, Matt Weimer 2011-2019, nanoFramework Contributors 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
