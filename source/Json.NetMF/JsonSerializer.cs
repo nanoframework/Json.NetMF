@@ -82,7 +82,7 @@ namespace Json.NETMF
                 case "Char":
                 case "Guid":
                     {
-                        return "\"" + SerializeString(o as String) + "\"";
+                        return "\"" + o.ToString() + "\"";
                     }
                 case "Single":
                 case "Double":
