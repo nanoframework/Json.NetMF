@@ -54,7 +54,9 @@ Any object that implements IEnumerable will get serialized into a JSON array. Th
 
 ```c#
 ArrayList arrayList = new ArrayList() { 1, true, "hello world", null };
+
 string json = JsonSerializer.SerializeObject(arrayList);
+
 Debug.Print(json);
 // Output: [1,true,"hello world",null]
 ```
@@ -68,7 +70,9 @@ hashtable.Add("a null", null);
 hashtable.Add("a string", "hello world");
 hashtable.Add("a number", 1);
 hashtable.Add("an array", new object[] {1, 2, 3 });
+
 string json = JsonSerializer.SerializeObject(hashtable);
+
 Debug.Print(json);
 // Output: {"a string":"hello world","a null":null,"a bool":true,"a number":1,"an array":[1,2,3]}
  ```
@@ -88,7 +92,9 @@ public class Person
 ...
 
 Person person = new Person() { FirstName = "John", LastName = "Doe", Birthday = new DateTime(1988, 4, 23) };
+
 string json = JsonSerializer.SerializeObject(person);
+
 Debug.Print(json);
 // Output: {"Birthday":"1988-04-23T00:00:00.000Z","LastName":"Doe","FirstName":"John"}
 ```
@@ -107,12 +113,14 @@ Debug.Print(arrayList[0] + " " + arrayList[1] + arrayList[2]);
 // JSON object to Hashtable
 string json = "{\"firstName\":\"John\",\"lastName\":\"Doe\"}";
 Hashtable hashTable = JsonSerializer.DeserializeString(json) as Hashtable;
+
 Debug.Print(hashTable["firstName"] + " " + hashTable["lastName"]);
 // Output: "John Doe"
 
 // Checking return types
 string json = "[1, 2.345, -5, -232323.7878678]";
 object deserializedObject = JsonSerializer.DeserializeString(json);
+
 if (deserializedObject is ArrayList)
 {
     ArrayList arrayList = deserializedObject as ArrayList;
@@ -141,8 +149,11 @@ Extensions methods are provided to parse a DateTime string to a DateTime object
 
 ```c#
 string json = "{\"firstName\":\"John\",\"lastName\":\"Doe\",\"birthDay\":\"1985-04-27T00:00:00.000Z\"}";
+
 Hashtable hashTable = JsonSerializer.DeserializeString(json) as Hashtable;
+
 DateTime birthday = DateTimeExtensions.FromIso8601(hashTable["birthDay"] as string);
+
 Debug.Print(birthday.ToString());
 // Output: "04/27/1985 00:00:00"
 ```
