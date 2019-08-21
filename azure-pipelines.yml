@@ -6,7 +6,7 @@ trigger:
     - release/*
     - refs/tags/*
   paths:
-    exclude: [ *.md, .gitignore ]
+    exclude: [ README.md, CHANGELOG.md, .gitignore ]
 
 pr:
   branches:
