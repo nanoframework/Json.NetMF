@@ -1,4 +1,4 @@
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nanoframework_Json.NetMF&metric=alert_status)](https://sonarcloud.io/dashboard?id=nanoframework_Json.NetMF) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=nanoframework_Json.NetMF&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=nanoframework_Json.NetMF) [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/nanoframework/Json.NetMF/blob/master/LICENSE) [![NuGet](https://img.shields.io/nuget/dt/nanoFramework.Json.svg)]() [![#yourfirstpr](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](https://github.com/nanoframework/Home/blob/master/CONTRIBUTING.md) [![Discord](https://img.shields.io/discord/478725473862549535.svg)](https://discord.gg/gCyBu8T)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nanoframework_Json.NetMF&metric=alert_status)](https://sonarcloud.io/dashboard?id=nanoframework_Json.NetMF) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=nanoframework_Json.NetMF&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=nanoframework_Json.NetMF) [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/nanoframework/Json.NetMF/blob/master/LICENSE) [![#yourfirstpr](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](https://github.com/nanoframework/Home/blob/master/CONTRIBUTING.md) [![Discord](https://img.shields.io/discord/478725473862549535.svg?logo=discord&logoColor=white&label=Discord&color=7289DA)](https://discord.gg/gCyBu8T)
 
 # nanoFramework.Json (Json.NetMF)
 
@@ -13,9 +13,9 @@ Its hopefully faster, more lightweight, and more robust.
 
 | Component | Build Status | NuGet Package |
 |:-|---|---|
-| nanoFramework.Json | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=master)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=40&branchName=master) | [![NuGet](https://img.shields.io/nuget/v/nanoFramework.Json.svg)](https://www.nuget.org/packages/nanoFramework.Json/)  |
+| nanoFramework.Json | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=master)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=40&branchName=master) | [![NuGet](https://img.shields.io/nuget/v/nanoFramework.Json.svg?label=NuGet&style=flat&logo=nuget)](https://www.nuget.org/packages/nanoFramework.Json/)  |
 | nanoFramework.Json (preview) | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=develop)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=40&branchName=develop) | [![](https://badgen.net/badge/NuGet/preview/D7B023?icon=https://simpleicons.now.sh/azuredevops/fff)](https://dev.azure.com/nanoframework/feed/_packaging?_a=package&feed=sandbox&package=nanoFramework.Json&protocolType=NuGet&view=overview) |
-| Json.NetMF | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=master)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=40&branchName=master) | [![NuGet](https://img.shields.io/nuget/v/Json.NetMF.svg)](https://www.nuget.org/packages/Json.NetMF/)  |
+| Json.NetMF | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=master)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=40&branchName=master) | [![NuGet](https://img.shields.io/nuget/v/Json.NetMF.svg?label=NuGet&style=flat&logo=nuget)](https://www.nuget.org/packages/Json.NetMF/)  |
 | Json.NetMF (preview) | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=develop)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=40&branchName=develop) | [![](https://badgen.net/badge/NuGet/preview/D7B023?icon=https://simpleicons.now.sh/azuredevops/fff)](https://dev.azure.com/nanoframework/feed/_packaging?_a=package&feed=sandbox&package=json.NetMF&protocolType=NuGet&view=overview) |
 
 ## Requirements
@@ -48,7 +48,7 @@ string json = JsonSerializer.SerializeObject(o);
 
 ### Serialization
 
-Pretty much any object can be serialized. 
+Pretty much any object can be serialized.
 
 Any object that implements IEnumerable will get serialized into a JSON array. This include arrays, ArrayList, ICollection, IList, Queue and Stack.
 
@@ -95,8 +95,7 @@ Debug.Print(json);
 
 ### Deserialization
 
-Deserialization will parse your JSON string and return it contents in either ArrayList, Hashtable, double, long, string, null, bool. You will need to know what type you are expecting and cast the return object to that type 
-or manually check the type and then cast.
+Deserialization will parse your JSON string and return it contents in either ArrayList, Hashtable, double, long, string, null, bool. You will need to know what type you are expecting and cast the return object to that type or manually check the type and then cast.
 
 ```c#
 // JSON array to ArrayList
@@ -173,5 +172,6 @@ Join our Discord community [here](https://discord.gg/gCyBu8T).
 The **nanoFramework.Json** is licensed under the [MIT](LICENSE) license.
 
 ## Code of Conduct
+
 This project has adopted the code of conduct defined by the [Contributor Covenant](http://contributor-covenant.org/)
 to clarify expected behavior in our community.
