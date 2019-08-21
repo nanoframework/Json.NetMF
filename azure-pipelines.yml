@@ -6,10 +6,7 @@ trigger:
     - release/*
     - refs/tags/*
   paths:
-    exclude:
-    - CHANGELOG.md
-    - /*.md
-    - .gitignore
+    exclude: [ \*.md, .gitignore ]
 
 pr:
   branches:
@@ -71,15 +68,15 @@ jobs:
       else
       {
         echo "##vso[task.setvariable variable=BUILD_NETMF;isOutput=true]False"
-      }     
+      }
 
     name: BuildOptions
-    displayName: get list of changed files
+    displayName: Get build options
 
 ###############################################
 # build
 - job: Build_NETMF
-  condition: eq( dependencies.Get_Build_Options.outputs['BuildOptions.BUILD_NETMF'], true )
+  condition: or( eq( dependencies.Get_Build_Options.outputs['BuildOptions.BUILD_NETMF'], true ), eq(variables['BUILD_NETMF'], 'true') )
   dependsOn:
   - Get_Build_Options
 
@@ -295,7 +292,7 @@ jobs:
 #######################################
 # build
 - job: Build_nF
-  condition: eq( dependencies.Get_Build_Options.outputs['BuildOptions.BUILD_NF'], true )
+  condition: or( eq( dependencies.Get_Build_Options.outputs['BuildOptions.BUILD_NF'], true ), eq(variables['BUILD_NF'], 'true') )
   dependsOn:
   - Get_Build_Options
 
