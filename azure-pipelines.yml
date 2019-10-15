@@ -110,6 +110,8 @@ jobs:
       
       git checkout develop
 
+      cd source
+
       nbgv prepare-release
   
       # get commit message for the merge
