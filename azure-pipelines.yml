@@ -1,0 +1,562 @@
+trigger:
+  branches:
+    include:
+    - master
+    - develop
+    - release/*
+    - refs/tags/*
+  paths:
+    exclude: [ README.md, CHANGELOG.md, .gitignore ]
+
+pr:
+  branches:
+    include:
+    - master
+    - develop
+    - release/*
+  autoCancel: true
+
+# add nf-tools repo to resources (for Azure Pipelines templates)
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: nanoframework/nf-tools
+      endpoint: nanoframework
+
+variables:
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+jobs:
+
+##############################
+- job: Get_Build_Options
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  steps:
+  - checkout: self
+
+    # get commit message
+  - powershell: |
+      git config --global user.email "nanoframework@outlook.com"
+      git config --global user.name "nfbot"
+
+      $auth = "basic $([System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes(":$(GitHubToken)"))))"
+
+      if($env:StartReleaseCandidate -like "true")
+      {
+        # this is a release prep so NO build
+        echo "##vso[task.setvariable variable=BUILD_NETMF;isOutput=true]False"
+        echo "##vso[task.setvariable variable=BUILD_NF;isOutput=true]False"  
+        
+        Write-Host "Release preparation, skipping build."
+      }
+      else
+      {
+        $commit = Invoke-RestMethod -Uri "https://api.github.com/repos/nanoframework/Json.NetMF/commits/$(Build.SourceVersion)" -Header @{"Authorization"="$auth"} -ContentType "application/json" -Method GET
+        Write-host "Files changed:"
+        $commit.files | % {$_.filename}
+
+        # order matters: source files are on .NETMF folder
+        # check that last so BUILD_NF can be overriden if needed
+        if ( $commit.files.filename -like "*nanoFramework.Json*" )
+        {
+          echo "##vso[task.setvariable variable=BUILD_NF;isOutput=true]true"  
+        }
+        else
+        {
+          echo "##vso[task.setvariable variable=BUILD_NF;isOutput=true]False"  
+        }
+
+        if ( $commit.files.filename -like "*Json.NetMF*" )
+        {
+          echo "##vso[task.setvariable variable=BUILD_NETMF;isOutput=true]true"
+          echo "##vso[task.setvariable variable=BUILD_NF;isOutput=true]true"
+        }
+        else
+        {
+          echo "##vso[task.setvariable variable=BUILD_NETMF;isOutput=true]False"
+        }
+      }
+    name: BuildOptions
+    displayName: Get build options
+
+  - task: DotNetCoreCLI@2  
+    inputs:
+      command: custom
+      custom: tool
+      arguments: install -g nbgv
+    condition: eq( variables['StartReleaseCandidate'], true )
+    displayName: Install NBGV tool
+
+  - powershell: |
+
+      # compute authorization header in format "AUTHORIZATION: basic 'encoded token'"
+      # 'encoded token' is the Base64 of the string "nfbot:personal-token"
+      $auth = "basic $([System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("nfbot:$(GitHubToken)"))))"
+
+      cd "$env:Agent_TempDirectory" > $null
+
+      git init "$env:Agent_TempDirectory\repo"
+      cd repo > $null
+      git remote add origin "$env:Build_Repository_Uri"
+      git config --global gc.auto 0
+      git config --global user.name nfbot
+      git config --global user.email nanoframework@outlook.com
+      git config --global core.autocrlf true
+      git -c http.extraheader="AUTHORIZATION: $auth" fetch --progress origin
+      
+      git checkout develop
+
+      cd source
+
+      nbgv prepare-release
+  
+      # get commit message for the merge
+      $commitMessage = git log -1 --pretty=%B
+
+      # amend commit message to skip build
+      git commit --amend -m "$commitMessage" -m "***NO_CI***" > $null
+
+      # push all changes to github
+      git -c http.extraheader="AUTHORIZATION: $auth" push --all origin
+
+    condition: eq( variables['StartReleaseCandidate'], true )
+    displayName: NBGV prepare release
+
+###############################################
+# build
+- job: Build_NETMF
+  condition: or( eq( dependencies.Get_Build_Options.outputs['BuildOptions.BUILD_NETMF'], true ), eq(variables['BUILD_NETMF'], 'true') )
+  dependsOn:
+  - Get_Build_Options
+
+  pool:
+    vmImage: 'vs2015-win2012r2'
+
+  variables:
+    solution: 'source/Json.NetMF.sln'
+    buildPlatform: 'Any CPU'
+    buildConfiguration: 'Release'
+
+  steps:
+
+  - checkout: self
+
+  - script: |
+      git config --global user.email "nanoframework@outlook.com"
+      git config --global user.name "nfbot"
+    displayName: Setup git identity
+
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+          Write-Output "Installing .NET MicroFramework 4.3 ..."
+
+          $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK43.MSI"
+
+          (New-Object Net.WebClient).DownloadFile('https://github.com/Azure/amqpnetlite/releases/download/netmf4.3/MicroFrameworkSDK4.3.MSI', $msiPath)
+
+          & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf43.log | Write-Output
+
+          Write-Output "NETMF43 Installed"
+
+          Write-Output "Installing .NET MicroFramework 4.4 ..."
+
+          $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK44.MSI"
+
+          (New-Object Net.WebClient).DownloadFile('https://github.com/NETMF/netmf-interpreter/releases/download/v4.4-RTW-20-Oct-2015/MicroFrameworkSDK.MSI', $msiPath)
+
+          & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf44.log | Write-Output
+
+          Write-Output "NETMF44 Installed"
+
+    displayName: Install .NETMF SDKs
+
+  - task: NuGetToolInstaller@0
+    inputs:
+      versionSpec: '4.9.3'
+    displayName: Install specifc version of NuGet
+
+  - task: NuGetCommand@2
+    inputs:
+      restoreSolution: '$(solution)'
+      feedsToUse: config
+      nugetConfigPath: source/NuGet.config
+    displayName: NuGet restore
+
+  - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+      platform: '$(buildPlatform)'
+      msbuildArgs: '/p:PublicRelease=true'
+      configuration: '$(buildConfiguration)'
+
+  - task: PowerShell@2
+    inputs:
+        targetType: 'inline'
+        script: |
+            $MyNuGetVersion = $env:NBGV_NuGetPackageVersion -replace "\-g$env:NBGV_GitCommitIdShort", ""
+
+            # replace preview with alpha if this is a PR build
+            if($env:Build_Reason -eq 'PullRequest')
+            {
+              $MyNuGetVersion = $MyNuGetVersion -replace "preview", "alpha"
+            }
+
+            Write-Host "NuGet build number is $MyNuGetVersion"
+
+            Write-Host "$("##vso[task.setvariable variable=MY_NUGET_VERSION]")$MyNuGetVersion"
+    condition: succeeded()
+    displayName: Get NuGet build number
+
+  - powershell: |
+      # get subject and commit message for commit
+      $commitMessage = git log --format='%B' -1
+
+      # need to flatten message by removing new lines
+      $commitMessage = $commitMessage -replace "`r`n", " "
+
+      if($commitMessage -like "*PUBLISH_RELEASE*")
+      {
+        # set variable
+        Write-Host "$("##vso[task.setvariable variable=RELEASE_DRAFT;isOutput=true]")False"
+        Write-Host "$("##vso[task.setvariable variable=RELEASE_VERSION;isOutput=true]")True"
+        Write-Host "Release draft: FALSE"
+      }
+      else
+      {
+        # set variable
+        Write-Host "$("##vso[task.setvariable variable=RELEASE_DRAFT;isOutput=true]")True"
+        Write-Host "$("##vso[task.setvariable variable=RELEASE_VERSION;isOutput=true]")False"
+        Write-Host "Release draft: TRUE"
+      }
+    name: SetReleaseDraftVar
+    displayName: Set release draft var
+
+  - task: NuGetCommand@2
+    inputs:
+      command: 'custom' 
+      arguments: 'pack nuspec\Json.NetMF.nuspec -Version $(MY_NUGET_VERSION) -BasePath .\'
+    displayName: Pack NuGet
+
+  - task: CopyFiles@1
+    inputs:
+      sourceFolder: $(Build.SourcesDirectory)
+      Contents: |
+        **\Json*.nupkg
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      flattenFolders: true
+    condition: succeeded()
+    displayName: Collecting deployable artifacts
+
+  # publish artifacts (only possible if this is not a PR originated on a fork)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: deployables
+      ArtifactType: Container
+    condition: and( succeeded(), ne(variables['system.pullrequest.isfork'], true) )
+    displayName: Publish deployables artifacts
+
+  # push NuGet packages to AzureArtifacts feed (always happens except on PR builds)
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+      publishFeedCredentials: 'AzureArtifacts'
+    condition: succeeded()
+    continueOnError: true
+    displayName: Push NuGet packages to AzureArtifacts
+
+  # push NuGet class lib package to NuGet (happens on tag builds for any branch)
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      allowPackageConflicts: true
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+      publishFeedCredentials: 'NuGet'
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v') )
+    continueOnError: true
+    displayName: Push NuGet packages to NuGet
+
+  # create or update GitHub release
+  - task: GitHubReleasePublish@1
+    inputs:
+      githubEndpoint: 'nanoframework'
+      githubOwner: 'nanoframework'
+      githubRepositoryName: 'Json.NetMF'
+      githubTag: 'v$(MY_NUGET_VERSION)-NETMF'
+      githubReleaseTitle: 'Json.NetMF v$(MY_NUGET_VERSION)'
+      githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from nanoFramework AzureArtifacts development feed</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://dev.azure.com/nanoframework/feed/_packaging?_a=package&feed=sandbox&view=overview&package=Json.NetMF&protocolType=NuGet&version=$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
+      githubTargetCommitsh: $(Build.SourceVersion)
+      githubReleaseDraft: $(RELEASE_DRAFT)
+      githubReleasePrerelease: true
+      githubReuseDraftOnly: true
+      githubReuseRelease: true
+      githubEditRelease: true
+      githubDeleteEmptyTag: true
+      githubReleaseAsset: '$(Build.ArtifactStagingDirectory)/*'
+    condition: and( succeeded(), not( startsWith(variables['Build.SourceBranch'], 'refs/pull') ), not( startsWith(variables['Build.SourceBranch'], 'refs/tags/v') ) )
+    displayName: Create/Update GitHub release
+
+  # create or update GitHub release ON tags from release or master branches
+  - task: GitHubReleasePublish@1
+    inputs:
+      githubEndpoint: 'nanoframework'
+      githubOwner: 'nanoframework'
+      githubRepositoryName: 'Json.NetMF'
+      githubTag: 'v$(MY_NUGET_VERSION)-NETMF'
+      githubReleaseTitle: 'Json.NetMF v$(MY_NUGET_VERSION)'
+      githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from NuGet</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.nuget.org/packages/Json.NetMF/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
+      githubTargetCommitsh: $(Build.SourceVersion)
+      githubReleaseDraft: $(RELEASE_DRAFT)
+      githubReleasePrerelease: true
+      githubReuseDraftOnly: false
+      githubReuseRelease: true
+      githubEditRelease: true
+      githubDeleteEmptyTag: true
+      githubReleaseAsset: '$(Build.ArtifactStagingDirectory)/$(nugetPackageName).$(MY_NUGET_VERSION).nupkg'
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), contains(variables['Build.SourceBranch'], 'preview') )
+    displayName: Create/Update GitHub PREVIEW release 
+
+  # create or update GitHub release ON tags from release or master branches
+  - task: GitHubReleasePublish@1
+    inputs:
+      githubEndpoint: 'nanoframework'
+      githubOwner: 'nanoframework'
+      githubRepositoryName: 'Json.NetMF'
+      githubTag: 'v$(MY_NUGET_VERSION)-NETMF'
+      githubReleaseTitle: 'Json.NetMF v$(MY_NUGET_VERSION)'
+      githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from NuGet</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.nuget.org/packages/Json.NetMF/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
+      githubTargetCommitsh: $(Build.SourceVersion)
+      githubReleaseDraft: false
+      githubReleasePrerelease: false
+      githubReuseDraftOnly: false
+      githubReuseRelease: false
+      githubEditRelease: false
+      githubDeleteEmptyTag: true
+      githubReleaseAsset: '$(Build.ArtifactStagingDirectory)/*.vsix'
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), not(contains(variables['Build.SourceBranch'], 'preview') ) )
+    displayName: Create/Update GitHub stable release
+
+#######################################
+# build
+- job: Build_nF
+  condition: or( eq( dependencies.Get_Build_Options.outputs['BuildOptions.BUILD_NF'], true ), eq(variables['BUILD_NF'], 'true') )
+  dependsOn:
+  - Get_Build_Options
+
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  variables:
+    solution: 'source/Json.nanoFramework.sln'
+    buildPlatform: 'Any CPU'
+    buildConfiguration: 'Release'
+
+  steps:
+
+  - checkout: self
+
+  - script: |
+      git config --global user.email "nanoframework@outlook.com"
+      git config --global user.name "nfbot"
+    displayName: Setup git identity
+
+  - task: InstallnFBuildComponents@1
+    displayName: Install nanoFramework MSBuild components
+
+  - task: NuGetToolInstaller@0
+    inputs:
+      versionSpec: '4.9.3'
+    displayName: Install specifc version of NuGet
+
+  - task: NuGetCommand@2
+    inputs:
+      restoreSolution: '$(solution)'
+      feedsToUse: config
+      nugetConfigPath: source/NuGet.config
+    displayName: NuGet restore
+
+  - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+      platform: '$(buildPlatform)'
+      msbuildArgs: '/p:PublicRelease=true'
+      configuration: '$(buildConfiguration)'
+
+  - task: PowerShell@2
+    inputs:
+        targetType: 'inline'
+        script: |
+            $MyNuGetVersion = $env:NBGV_NuGetPackageVersion -replace "\-g$env:NBGV_GitCommitIdShort", ""
+
+            # replace preview with alpha if this is a PR build
+            if($env:Build_Reason -eq 'PullRequest')
+            {
+              $MyNuGetVersion = $MyNuGetVersion -replace "preview", "alpha"
+            }
+
+            Write-Host "NuGet build number is $MyNuGetVersion"
+
+            Write-Host "$("##vso[task.setvariable variable=MY_NUGET_VERSION]")$MyNuGetVersion"
+    condition: succeeded()
+    displayName: Get NuGet build number
+    
+  - task: NuGetCommand@2
+    inputs:
+      command: 'custom' 
+      arguments: 'pack nuspec\Json.nanoFramework.nuspec -Version $(MY_NUGET_VERSION) -BasePath .\'
+    displayName: Pack NuGet
+
+  - task: CopyFiles@1
+    inputs:
+      sourceFolder: $(Build.SourcesDirectory)
+      Contents: |
+        **\nanoFramework.Json*.nupkg
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      flattenFolders: true
+    condition: succeeded()
+    displayName: Collecting deployable artifacts
+
+  # publish artifacts (only possible if this is not a PR originated on a fork)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: deployables
+      ArtifactType: Container
+    condition: and( succeeded(), ne(variables['system.pullrequest.isfork'], true) )
+    displayName: Publish deployables artifacts
+
+  # push NuGet packages to AzureArtifacts feed (always happens except on PR builds)
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+      publishFeedCredentials: 'AzureArtifacts'
+    condition: succeeded()
+    continueOnError: true
+    displayName: Push NuGet packages to AzureArtifacts
+
+  # push NuGet class lib package to NuGet (happens on tag builds for any branch)
+  - task: NuGetCommand@2
+    inputs:
+      command: push
+      nuGetFeedType: external
+      allowPackageConflicts: true
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+      publishFeedCredentials: 'NuGet'
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v') )
+    continueOnError: true
+    displayName: Push NuGet packages to NuGet
+
+  - powershell: |
+      # get subject and commit message for commit
+      $commitMessage = git log --format='%B' -1
+
+      # need to flatten message by removing new lines
+      $commitMessage = $commitMessage -replace "`r`n", " "
+
+      if($commitMessage -like "*PUBLISH_RELEASE*")
+      {
+        # set variable
+        Write-Host "$("##vso[task.setvariable variable=RELEASE_DRAFT]")false"
+        Write-Host "Release draft: FALSE"
+      }
+      else
+      {
+        # set variable
+        Write-Host "$("##vso[task.setvariable variable=RELEASE_DRAFT]")true"
+        Write-Host "Release draft: TRUE"
+      }
+
+    displayName: set release draft var
+  # create or update GitHub release
+  - task: GitHubReleasePublish@1
+    inputs:
+      githubEndpoint: 'nanoframework'
+      githubOwner: 'nanoframework'
+      githubRepositoryName: 'Json.NetMF'
+      githubTag: 'v$(MY_NUGET_VERSION)-NF'
+      githubReleaseTitle: 'nanoframework.Json v$(MY_NUGET_VERSION)'
+      githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NF.md).<br><br><h4>Install from nanoFramework AzureArtifacts development feed</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://dev.azure.com/nanoframework/feed/_packaging?_a=package&feed=sandbox&view=overview&package=Json.NetMF&protocolType=NuGet&version=$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
+      githubTargetCommitsh: $(Build.SourceVersion)
+      githubReleaseDraft: $(RELEASE_DRAFT)
+      githubReleasePrerelease: true
+      githubReuseDraftOnly: true
+      githubReuseRelease: true
+      githubEditRelease: true
+      githubDeleteEmptyTag: true
+      githubReleaseAsset: '$(Build.ArtifactStagingDirectory)/*'
+    condition: and( succeeded(), not( startsWith(variables['Build.SourceBranch'], 'refs/pull') ), not( startsWith(variables['Build.SourceBranch'], 'refs/tags/v') ) )
+    displayName: Create/Update GitHub release
+
+  # create or update GitHub release ON tags from release or master branches
+  - task: GitHubReleasePublish@1
+    inputs:
+      githubEndpoint: 'nanoframework'
+      githubOwner: 'nanoframework'
+      githubRepositoryName: 'Json.NetMF'
+      githubTag: 'v$(MY_NUGET_VERSION)-NF'
+      githubReleaseTitle: 'nanoframework.Json v$(MY_NUGET_VERSION)'
+      githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from NuGet</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.nuget.org/packages/nanoFramework.Json/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
+      githubTargetCommitsh: $(Build.SourceVersion)
+      githubReleaseDraft: $(RELEASE_DRAFT)
+      githubReleasePrerelease: true
+      githubReuseDraftOnly: false
+      githubReuseRelease: true
+      githubEditRelease: true
+      githubDeleteEmptyTag: true
+      githubReleaseAsset: '$(Build.ArtifactStagingDirectory)/$(nugetPackageName).$(MY_NUGET_VERSION).nupkg'
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), contains(variables['Build.SourceBranch'], 'preview') )
+    displayName: Create/Update GitHub PREVIEW release 
+
+  # create or update GitHub release ON tags from release or master branches
+  - task: GitHubReleasePublish@1
+    inputs:
+      githubEndpoint: 'nanoframework'
+      githubOwner: 'nanoframework'
+      githubRepositoryName: 'Json.NetMF'
+      githubTag: 'v$(MY_NUGET_VERSION)-NF'
+      githubReleaseTitle: 'nanoframework.Json v$(MY_NUGET_VERSION)'
+      githubReleaseNotes: 'Check the [changelog]($(Build.Repository.Uri)/blob/$(Build.SourceBranchName)/CHANGELOG-NETMF.md).<br><br><h4>Install from NuGet</h4><br>The following NuGet packages are available for download from this release:<br>:package: [.NET](https://www.nuget.org/packages/nanoFramework.Json/$(MY_NUGET_VERSION)) v$(MY_NUGET_VERSION).'
+      githubTargetCommitsh: $(Build.SourceVersion)
+      githubReleaseDraft: false
+      githubReleasePrerelease: false
+      githubReuseDraftOnly: false
+      githubReuseRelease: false
+      githubEditRelease: false
+      githubDeleteEmptyTag: true
+      githubReleaseAsset: '$(Build.ArtifactStagingDirectory)/*.vsix'
+    condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'), not(contains(variables['Build.SourceBranch'], 'preview') ) )
+    displayName: Create/Update GitHub release on TAGs
+
+##################################
+# report build failure to Discord
+- job: Report_Build_Failure
+  dependsOn:
+  - Build_NETMF
+  - Build_nF 
+  condition: or( failed('Build_NETMF'), failed('Build_nF'))
+
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  steps:
+
+  - checkout: self
+    fetchDepth: 1
+
+  # step from template @ nf-tools repo
+  - template: azure-pipelines-templates/discord-webhook.yml@templates  
+    parameters:
+      status: 'failure'
+      webhookUrl: '$(DiscordWebhook)'
+      message: ''

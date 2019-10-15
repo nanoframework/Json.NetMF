@@ -4,7 +4,7 @@ using System;
 using System.Reflection;
 using System.Collections;
 using System.Text;
-#if (NANOFRAMEWORK_V1_0)
+#if (NANOFRAMEWORK_1_0)
 namespace nanoFramework.Json
 #else
 using Microsoft.SPOT;
@@ -82,7 +82,7 @@ namespace Json.NETMF
                 case "Char":
                 case "Guid":
                     {
-                        return "\"" + SerializeString(o as String) + "\"";
+                        return "\"" + o.ToString() + "\"";
                     }
                 case "Single":
                 case "Double":

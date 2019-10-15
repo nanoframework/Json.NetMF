@@ -1,7 +1,7 @@
 ﻿// Source code is modified from Mike Jones's JSON Serialization and Deserialization library (https://www.ghielectronics.com/community/codeshare/entry/357)
 
 using System;
-#if (NANOFRAMEWORK_V1_0)
+#if (NANOFRAMEWORK_1_0)
 namespace nanoFramework.Json
 #else
 using Microsoft.SPOT;

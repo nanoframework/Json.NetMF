@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>nanoFramework.Json</id>
+    <title>JSON Serializer and Deserializer library for the .NET nanoFramework</title>
+    <version>0.0.0</version>
+    <authors>nanoFramework project contributors</authors>
+    <owners>nanoFramework project contributors</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <releaseNotes>
+    </releaseNotes>
+    <developmentDependency>false</developmentDependency>
+    <projectUrl>https://github.com/nanoFramework/Json.NetMF</projectUrl>
+    <iconUrl>https://secure.gravatar.com/avatar/97d0e092247f0716db6d4b47b7d1d1ad</iconUrl>
+    <copyright>Copyright (c) 2019 The nanoFramework project contributors</copyright>
+    <licenseUrl>https://github.com/nanoFramework/Json.NetMF/blob/master/LICENSE</licenseUrl>
+    <description>JSON Serializer and Deserializer library for the .NET nanoFramework.</description>
+    <summary>JSON Serializer and Deserializer library for the .NET nanoFramework</summary>
+    <tags>netmf nf nanoframework json</tags>
+    <dependencies>
+      <dependency id="nanoFramework.CoreLibrary" version="1.2.6" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\nanoFramework.Json\nanoFramework.Json.dll" target="lib\nanoFramework.Json.dll" />
+    <file src="bin\Release\nanoFramework.Json\nanoFramework.Json.pdb" target="lib\nanoFramework.Json.pdb" />
+    <file src="bin\Release\nanoFramework.Json\nanoFramework.Json.pdbx" target="lib\nanoFramework.Json.pdbx" />
+    <file src="bin\Release\nanoFramework.Json\nanoFramework.Json.pe" target="lib\nanoFramework.Json.pe" />
+    <file src="bin\Release\nanoFramework.Json\nanoFramework.Json.xml" target="lib\nanoFramework.Json.xml" />
+  </files>
+</package>

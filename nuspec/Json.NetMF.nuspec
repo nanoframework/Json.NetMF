@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Json.NETMF</id>
+    <title>JSON Serializer and Deserializer library for the .NET Micro Framework</title>
+    <version>0.0.0</version>
+    <authors>Matt Weimer</authors>
+    <owners>nanoFramework project contributors</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <releaseNotes>
+    </releaseNotes>
+    <developmentDependency>false</developmentDependency>
+    <projectUrl>https://github.com/nanoFramework/Json.NetMF</projectUrl>
+    <iconUrl>https://secure.gravatar.com/avatar/97d0e092247f0716db6d4b47b7d1d1ad</iconUrl>
+    <copyright>Copyright (c) 2011-2013 Mike Jones, Matt Weimer</copyright>
+    <licenseUrl>https://github.com/nanoFramework/Json.NetMF/blob/master/LICENSE</licenseUrl>
+    <description>JSON Serializer and Deserializer library for the .NET  Micro Framework.</description>
+    <summary>JSON Serializer and Deserializer library for the .NET Micro Framework</summary>
+    <tags>netmf json</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="Microsoft.SPOT.Native" targetFramework="netmf42, netmf43, netmf44" />
+      <frameworkAssembly assemblyName="System" targetFramework="netmf42, netmf43, netmf44" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Json.NetMF42\*.*" target="lib\netmf42" />
+    <file src="bin\Release\Json.NetMF42\le\*.p*" target="lib\netmf42\le" />
+    <file src="bin\Release\Json.NetMF42\be\*.p*" target="lib\netmf42\be" />
+    <file src="bin\Release\Json.NetMF43\*.*" target="lib\netmf43" />
+    <file src="bin\Release\Json.NetMF43\le\*.p*" target="lib\netmf43\le" />
+    <file src="bin\Release\Json.NetMF43\be\*.p*" target="lib\netmf43\be" />
+    <file src="bin\Release\Json.NetMF44\*.*" target="lib\netmf44" />
+    <file src="bin\Release\Json.NetMF44\le\*.p*" target="lib\netmf44\le" />
+    <file src="bin\Release\Json.NetMF44\be\*.p*" target="lib\netmf44\be" />
+</files>
+</package>

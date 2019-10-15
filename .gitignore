@@ -122,3 +122,9 @@ UpgradeLog*.XML
 *.nupkg
 *.zip
 PushNuget.bat
+
+# Visual Studio cache/options directory
+.vs/
+
+#SoundCloud
+*.sonarqube/
