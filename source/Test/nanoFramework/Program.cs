@@ -47,7 +47,12 @@ namespace Test
                 hashTable.Add("quote", "---\"---");
                 hashTable.Add("backslash", "---\\---");
                 string json = JsonSerializer.SerializeObject(hashTable);
+
+#if (NANOFRAMEWORK_1_0)
+                string correctValue = "{\"quote\":\"---\"---\",\"backslash\":\"---\\---\"}";
+#else
                 string correctValue = "{\"quote\":\"---\\\"---\",\"backslash\":\"---\\\\---\"}";
+#endif
                 if (json != correctValue)
                 {
                     Console.WriteLine("Fail: SerializeStringsWithEscapeChars - Values did not match");

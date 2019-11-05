@@ -56,11 +56,14 @@ namespace Json.NETMF
 				}
 			}
 
-			if(utc)
+            // nanoFramework DateTime kind is UTC
+#if !(NANOFRAMEWORK_1_0)
+            if (utc)
 			{
 				// Convert the Kind to DateTimeKind.Utc if string Z present
 				dt = new DateTime(0, DateTimeKind.Utc).AddTicks(dt.Ticks);
 			}
+#endif
 
 			return dt;
 		}
