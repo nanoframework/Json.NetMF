@@ -240,7 +240,7 @@ jobs:
   - task: NuGetCommand@2
     inputs:
       command: 'custom' 
-      arguments: 'pack nuspec\Json.NetMF.nuspec -Version $(MY_NUGET_VERSION) -BasePath .\'
+      arguments: 'pack Json.NetMF.nuspec -Version $(MY_NUGET_VERSION) -BasePath .\'
     displayName: Pack NuGet
 
   - task: CopyFiles@1
