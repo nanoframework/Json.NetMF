@@ -18,8 +18,9 @@
     <summary>JSON Serializer and Deserializer library for the .NET nanoFramework</summary>
     <tags>netmf nf nanoframework json</tags>
     <dependencies>
-      <dependency id="nanoFramework.CoreLibrary" version="1.5.0-preview.1" />
-      <dependency id="nanoFramework.System.Collections" version="1.0.0-preview.2" />
+      <dependency id="nanoFramework.CoreLibrary" version="1.6.0-preview.1" />
+      <dependency id="nanoFramework.System.Collections" version="1.0.0-preview.6" />
+      <dependency id="nanoFramework.System.Text" version="1.0.0-preview.6" />
     </dependencies>
   </metadata>
   <files>
