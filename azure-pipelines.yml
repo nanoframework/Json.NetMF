@@ -268,7 +268,7 @@ jobs:
       command: push
       nuGetFeedType: external
       packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-      publishFeedCredentials: 'AzureArtifacts'
+      publishFeedCredentials: 'AzureArtifacts-json.NetMF'
     condition: succeeded()
     continueOnError: true
     displayName: Push NuGet packages to AzureArtifacts
@@ -280,7 +280,7 @@ jobs:
       nuGetFeedType: external
       allowPackageConflicts: true
       packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-      publishFeedCredentials: 'NuGet'
+      publishFeedCredentials: 'NuGet-json.NetMF'
     condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v') )
     continueOnError: true
     displayName: Push NuGet packages to NuGet
@@ -440,7 +440,7 @@ jobs:
       command: push
       nuGetFeedType: external
       packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-      publishFeedCredentials: 'AzureArtifacts'
+      publishFeedCredentials: 'AzureArtifacts-json.NetMF'
     condition: succeeded()
     continueOnError: true
     displayName: Push NuGet packages to AzureArtifacts
@@ -452,7 +452,7 @@ jobs:
       nuGetFeedType: external
       allowPackageConflicts: true
       packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-      publishFeedCredentials: 'NuGet'
+      publishFeedCredentials: 'NuGet-json.NetMF'
     condition: and( succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v') )
     continueOnError: true
     displayName: Push NuGet packages to NuGet
