@@ -32,8 +32,8 @@
       <HintPath>..\..\packages\nanoFramework.CoreLibrary.1.7.0-preview.12\lib\mscorlib.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nanoFramework.System.Collections, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\packages\nanoFramework.System.Collections.1.0.0-preview.12\lib\nanoFramework.System.Collections.dll</HintPath>
+    <Reference Include="nanoFramework.System.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\..\packages\nanoFramework.System.Collections.1.0.1-preview.1\lib\nanoFramework.System.Collections.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nanoFramework.System.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
