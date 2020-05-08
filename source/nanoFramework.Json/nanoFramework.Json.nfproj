@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib, Version=1.7.2.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\packages\nanoFramework.CoreLibrary.1.7.2-preview.6\lib\mscorlib.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.CoreLibrary.1.7.2-preview.7\lib\mscorlib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nanoFramework.System.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
