@@ -9,12 +9,14 @@ The library was originally forked and modified from Mike Jones's JSON Serializat
 
 Its hopefully faster, more lightweight, and more robust.
 
+### :warning: The nanoFramework version is deprecated and has been replaced by a new library: [nanoFramework.Json](https://github.com/nanoframework/lib-nanoframework.Json). :warning:
+
 ## Build status
 
 | Component | Build Status | NuGet Package |
 |:-|---|---|
-| nanoFramework.Json | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=master)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=55&branchName=master) | [![NuGet](https://img.shields.io/nuget/v/nanoFramework.Json.svg?label=NuGet&style=flat&logo=nuget)](https://www.nuget.org/packages/nanoFramework.Json/)  |
-| nanoFramework.Json (preview) | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=develop)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=55&branchName=develop) | [![](https://badgen.net/badge/NuGet/preview/D7B023?icon=https://simpleicons.now.sh/azuredevops/fff)](https://dev.azure.com/nanoframework/feed/_packaging?_a=package&feed=sandbox&package=nanoFramework.Json&protocolType=NuGet&view=overview) |
+| ~~nanoFramework.Json~~ see [nanoFramework.Json](https://github.com/nanoframework/lib-nanoframework.Json) | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=master)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=55&branchName=master) | [![NuGet](https://img.shields.io/nuget/v/nanoFramework.Json.svg?label=NuGet&style=flat&logo=nuget)](https://www.nuget.org/packages/nanoFramework.Json/)  |
+| ~~nanoFramework.Json (preview)~~ [nanoFramework.Json](https://github.com/nanoframework/lib-nanoframework.Json) | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=develop)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=55&branchName=develop) | [![](https://badgen.net/badge/NuGet/preview/D7B023?icon=https://simpleicons.now.sh/azuredevops/fff)](https://dev.azure.com/nanoframework/feed/_packaging?_a=package&feed=sandbox&package=nanoFramework.Json&protocolType=NuGet&view=overview) |
 | Json.NetMF | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=master)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=55&branchName=master) | [![NuGet](https://img.shields.io/nuget/v/Json.NetMF.svg?label=NuGet&style=flat&logo=nuget)](https://www.nuget.org/packages/Json.NetMF/)  |
 | Json.NetMF (preview) | [![Build Status](https://dev.azure.com/nanoframework/json.NetMF/_apis/build/status/nanoframework.Json.NetMF?branchName=develop)](https://dev.azure.com/nanoframework/json.NetMF/_build/latest?definitionId=55&branchName=develop) | [![](https://badgen.net/badge/NuGet/preview/D7B023?icon=https://simpleicons.now.sh/azuredevops/fff)](https://dev.azure.com/nanoframework/feed/_packaging?_a=package&feed=sandbox&package=json.NetMF&protocolType=NuGet&view=overview) |
 
